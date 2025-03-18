@@ -440,7 +440,7 @@ const OrderRow = ({ item, list, location }) => {
       >
         {" "}
         {location === "/offer" && discountPrice}{" "}
-        {location === "/earning" && shopId?.revenue}
+        {location === "/earning" && shopId?.revenue}{location === "/earning" && "%"}
         {location === "/order" && item?.totalAmount}
       </div>
       <div

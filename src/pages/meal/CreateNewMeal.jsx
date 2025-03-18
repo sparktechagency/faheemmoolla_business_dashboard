@@ -61,6 +61,7 @@ const dropdown = {
 
 const CreateSingleMeal = () => {
   const navigate = useNavigate();
+  const [form] = Form.useForm();
   const [mealLogoFileList, setMealLogoFileList] = useState([]);
   const [createMeal, { isLoading }] = useCreateMealMutation();
   const {
@@ -105,9 +106,17 @@ const CreateSingleMeal = () => {
 
   const [fileList, setFileList] = useState([]);
 
+  // Update form fields when fileList changes
+  useEffect(() => {
+    if (fileList.length > 0) {
+      form.setFieldsValue({ image: fileList });
+    }
+  }, [fileList, form]);
+
   const onChange = ({ fileList: newFileList }) => {
     setFileList(newFileList);
   };
+
   const onPreview = async (file) => {
     let src = file.url;
     if (!src) {
@@ -128,9 +137,13 @@ const CreateSingleMeal = () => {
     const openTime = values.collectionTime[0];
     const closeTime = values.collectionTime[1];
 
-    const open = `${openTime.$H < 10 ? "0" : ""}${openTime.$H}:${openTime.$M < 10 ? "0" : ""}${openTime.$M}`;
-    const close = `${closeTime.$H < 10 ? "0" : ""}${closeTime.$H}:${closeTime.$M < 10 ? "0" : ""}${closeTime.$M}`;
-    const time = `${open} to ${close}`
+    const open = `${openTime.$H < 10 ? "0" : ""}${openTime.$H}:${
+      openTime.$M < 10 ? "0" : ""
+    }${openTime.$M}`;
+    const close = `${closeTime.$H < 10 ? "0" : ""}${closeTime.$H}:${
+      closeTime.$M < 10 ? "0" : ""
+    }${closeTime.$M}`;
+    const time = `${open} to ${close}`;
 
     const mealData = {
       shopId: localStorage.getItem("shopId"),
@@ -154,16 +167,16 @@ const CreateSingleMeal = () => {
     }
     try {
       const response = await createMeal(formData).unwrap();
+      message.success("Meal created successfully!");
       navigate("/meal-management");
     } catch (error) {
-      message.error(error.data.message);
+      message.error(error.data.message || "Failed to create meal");
       console.error("Full error response:", error.data);
     }
   };
 
   return (
     <div className="w-full mt-16">
-
       <div className="">
         <div>
           <div
@@ -174,7 +187,7 @@ const CreateSingleMeal = () => {
             <span>Add New Meal</span>
           </div>
           <ConfigProvider theme={theme}>
-            <Form layout="vertical" onFinish={onFinish}>
+            <Form layout="vertical" form={form} onFinish={onFinish}>
               <Row gutter={[40, 2]}>
                 <Col span={8}>
                   <Form.Item
@@ -255,13 +268,11 @@ const CreateSingleMeal = () => {
                       placeholder="Select a category"
                       style={selectStyle}
                     >
-                      { 
-                        categories?.data?.map((category, index) => (
-                          <Option key={index} value={category?.name}>
-                            {category?.name}
-                          </Option>
-                        )
-                      )}
+                      {categories?.data?.map((category, index) => (
+                        <Option key={index} value={category?.name}>
+                          {category?.name}
+                        </Option>
+                      ))}
                     </Select>
                   </Form.Item>
                 </Col>
@@ -324,17 +335,21 @@ const CreateSingleMeal = () => {
 
                 <Col span={24}>
                   <Form.Item
-                    label="Select Multiple Image*"
+                    label="Image*"
                     className="custom-label"
-                    name="description"
+                    name="image"
                     rules={[
                       {
-                        required: true,
-                        message: (
-                          <span style={{ fontSize: "14px" }}>
-                            Please Select your Images
-                          </span>
-                        ),
+                        validator: (_, value) => {
+                          if (fileList.length > 0) {
+                            return Promise.resolve();
+                          }
+                          return Promise.reject(
+                            <span style={{ fontSize: "14px" }}>
+                              Please Select your Images
+                            </span>
+                          );
+                        },
                       },
                     ]}
                   >
@@ -355,7 +370,6 @@ const CreateSingleMeal = () => {
                     </ImgCrop>
                   </Form.Item>
                 </Col>
-
                 <Col span={24}>
                   <Form.Item
                     label="Description*"

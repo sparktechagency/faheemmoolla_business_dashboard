@@ -60,17 +60,27 @@ const MealManagement = () => {
     refetch,
   } = useGetMealsByShopQuery(shopId, { skip: !shopId });
 
-  const [isFetchingMeals, setIsFetchingMeals] = useState(false); // Track meal fetching state
+  const [isFetchingMeals, setIsFetchingMeals] = useState(false);
+  const [displayedMeals, setDisplayedMeals] = useState(null);
 
+  // Effect to handle initial meal loading and updates
   useEffect(() => {
     if (shopId) {
-      setIsFetchingMeals(true); // Start fetching meals
+      setIsFetchingMeals(true);
       refetch()
         .unwrap()
-        .finally(() => setIsFetchingMeals(false)); // Stop fetching meals
+        .finally(() => setIsFetchingMeals(false));
     }
   }, [shopId, refetch]);
 
+  // Update displayed meals only when loading is complete and data has changed
+  useEffect(() => {
+    if (!mealLoading && !isFetchingMeals && meals) {
+      setDisplayedMeals(meals);
+    }
+  }, [meals, mealLoading, isFetchingMeals]);
+
+  // Handle shop initialization
   useEffect(() => {
     if (allShop?.data?.shops?.length === 0) {
       localStorage.removeItem("shopId");
@@ -83,6 +93,11 @@ const MealManagement = () => {
   }, [allShop?.data?.shops, shopId]);
 
   const handleShopChange = (value) => {
+    // Set loading state immediately before changing shop
+    setIsFetchingMeals(true);
+    // Clear displayed meals immediately to avoid showing old data
+    setDisplayedMeals(null);
+    // Then update the shop ID
     setShopId(value);
     localStorage.setItem("shopId", value);
   };
@@ -108,7 +123,7 @@ const MealManagement = () => {
         </Link>
       </div>
 
-      {isFetchingMeals || mealLoading ? ( // Show loading state while fetching meals
+      {isFetchingMeals || mealLoading || !displayedMeals ? (
         <CustomLoading />
       ) : mealError ? (
         <div className="p-6 text-center rounded-2xl">
@@ -116,13 +131,13 @@ const MealManagement = () => {
             {mealError?.data?.message || "An error occurred while fetching meals."}
           </h2>
         </div>
-      ) : meals?.data?.length === 0 ? ( // Show message if no meals are available
+      ) : displayedMeals?.data?.length === 0 ? (
         <div className="p-6 text-center rounded-2xl">
           <h2 className="text-2xl font-semibold text-gray-800">No meals available for this shop.</h2>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-10 py-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {meals?.data?.map((item) => (
+          {displayedMeals?.data?.map((item) => (
             <div key={item._id}>
               <SingleMeal items={item} />
             </div>
