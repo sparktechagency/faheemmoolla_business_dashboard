@@ -1,0 +1,214 @@
+import { ConfigProvider, Select, Spin, Pagination } from "antd";
+import { debounce } from "lodash";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { MdTune } from "react-icons/md";
+import { useLocation } from "react-router-dom";
+import OrderData from "../../assets/icons/orderData.png";
+import shop_order from "../../assets/icons/shop_order.png";
+import AnalysisCard from "../../components/AnalysisCard";
+import Table from "../../components/Table";
+import TableRow from "../../components/TableRow";
+import { useGetOrderAnalysisQuery, useGetOrderQuery } from "../../features/order/orderApi";
+import { useAllShopQuery } from "../../features/shop/shopApi";
+import CustomLoading from "../../components/CustomLoading";
+
+const { Option } = Select;
+
+const columns = [
+  "Date",
+  "Order Number",
+  "User Name",
+  "Location",
+  "Offer",
+  "Item & Qty",
+  "Price",
+  "Service Charge",
+  "Status",
+];
+
+const Order = () => {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const searchValue = queryParams.get("search");
+
+  // State variables
+  const [status, setStatus] = useState("");
+  const [shopId, setShopId] = useState(() => localStorage.getItem("shopId") || "");
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+
+  // Fetch shop data
+  const { data: allShop, isLoading: shopLoading } = useAllShopQuery(undefined, { refetchOnFocus: true, refetchOnReconnect: true });
+
+  // Fetch order analysis
+  const { data: analysisData, isLoading: analysisLoading } = useGetOrderAnalysisQuery(shopId, { refetchOnFocus: true, refetchOnReconnect: true });
+
+  // Fetch orders with pagination
+  const { data: getOrder, isLoading: orderLoading } = useGetOrderQuery({ shopId, page, limit }, { refetchOnFocus: true, refetchOnReconnect: true });
+  console.log(getOrder)
+
+  // Extract order data
+  const totalOrders = getOrder?.data?.pagination?.total || 0;
+  const totalPages = getOrder?.data?.pagination?.totalPage || 1;
+  const orders = getOrder?.data?.order || [];
+
+  // Debugging API response
+  console.log("Fetched Orders:", getOrder);
+  console.log("Pagination Data:", getOrder?.data?.pagination);
+
+  // Set default shop if none is selected
+  useEffect(() => {
+    if (allShop?.data?.length && !shopId) {
+      const firstShopId = allShop.data[0]._id;
+      setShopId(firstShopId);
+      localStorage.setItem("shopId", firstShopId);
+    }
+  }, [allShop, shopId]);
+
+  // Debounced search
+  const handleSearch = useCallback(
+    debounce((searchText) => {
+      console.log("Searching for:", searchText);
+    }, 300),
+    []
+  );
+
+  useEffect(() => {
+    handleSearch(searchValue);
+  }, [searchValue, handleSearch]);
+
+  // Filter orders based on search and status
+  const filteredOrders = useMemo(() => {
+    const searchText = searchValue?.toLowerCase() || "";
+    let filtered = orders.slice().reverse();
+
+    if (searchText) {
+      filtered = filtered.filter(
+        (order) =>
+          order.orderNumber?.toLowerCase().includes(searchText) ||
+          order?.shopId?.shopAddress?.toLowerCase().includes(searchText) ||
+          order.location?.toLowerCase().includes(searchText)
+      );
+    }
+
+    if (status) {
+      filtered = filtered.filter((order) => order.orderStatus === status);
+    }
+
+    return filtered;
+  }, [orders, searchValue, status]);
+
+  // Handlers for filters and pagination
+  const handleShopChange = (value) => {
+    setShopId(value);
+    localStorage.setItem("shopId", value);
+    setPage(1); // Reset to first page on shop change
+  };
+
+  const handleStatusChange = (value) => {
+    setStatus(value);
+  };
+
+  const handlePageChange = (newPage) => {
+    console.log("Changing page to:", newPage);
+    setPage(newPage);
+  };
+
+  // Show loading state
+  // if (shopLoading || orderLoading) {
+  //   return <CustomLoading />;
+  // }
+
+  return (
+    <div className="w-full">
+      {/* Order Statistics */}
+      <div className="flex items-end justify-between py-4 mt-4">
+        <div className="flex items-center gap-8">
+          <AnalysisCard
+            value={analysisLoading ? <Spin /> : analysisData?.data?.completedOrdersCount || 0}
+            title={"Completed Orders"}
+            OrderDataImage={shop_order}
+            percentage={"4% (30 days)"}
+            OrderDatapercentage={OrderData}
+          />
+          <AnalysisCard
+            value={analysisLoading ? <Spin /> : analysisData?.data?.progressOrdersCount || 0}
+            title={"Orders in Progress"}
+            OrderDataImage={shop_order}
+            percentage={"12% (30 days)"}
+            OrderDatapercentage={OrderData}
+          />
+          <AnalysisCard
+            value={analysisLoading ? <Spin /> : analysisData?.data?.pendingOrdersCount || 0}
+            title={"Pending Orders"}
+            OrderDataImage={shop_order}
+            percentage={"4% (30 days)"}
+            OrderDatapercentage={OrderData}
+          />
+        </div>
+
+        {/* Filters */}
+        <div className="flex items-center gap-3">
+          <ConfigProvider>
+            <Select
+              size="large"
+              style={{ minWidth: 150 }}
+              onChange={handleStatusChange}
+              value={status || undefined}
+              placeholder="Select status"
+              prefix={<MdTune className="text-xl text-gray-600" />}
+            >
+              <Option value="">All Status</Option>
+              <Option value="pending">Pending</Option>
+              <Option value="preparing">Preparing</Option>
+              <Option value="ready for pickup">Ready for Pickup</Option>
+              <Option value="delivered">Delivered</Option>
+            </Select>
+          </ConfigProvider>
+
+          <ConfigProvider>
+            <Select
+              value={shopLoading ? "Loading..." : shopId}
+              size="large"
+              style={{ minWidth: 150 }}
+              onChange={handleShopChange}
+              prefix={<MdTune className="text-xl text-gray-600" />}
+            >
+              {allShop?.data?.shops?.length > 0 ? (
+                allShop?.data?.shops?.map((shop) => (
+                  <Option key={shop._id} value={shop._id}>
+                    {shop.shopName}
+                  </Option>
+                ))
+              ) : (
+                <Option value="" disabled>No shops available</Option>
+              )}
+            </Select>
+          </ConfigProvider>
+        </div>
+      </div>
+
+      {/* Orders Table and Pagination with Loading Spinner */}
+      <Spin spinning={orderLoading} tip="Loading..." size="small">
+        <Table
+          columns={columns}
+          location={location.pathname}
+          data={filteredOrders}
+          renderRow={(item, i) => <TableRow key={i} item={item} columns={columns} />}
+        />
+
+        {/* Pagination */}
+        <div className="flex justify-end mt-4">
+          <Pagination
+            current={page}
+            total={totalOrders}
+            pageSize={limit}
+            onChange={handlePageChange}
+          />
+        </div>
+      </Spin>
+    </div>
+  );
+};
+
+export default Order;

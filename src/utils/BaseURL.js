@@ -1,0 +1,1 @@
+export const baseURL = "https://rakibur5000.binarybards.online"
