@@ -255,14 +255,12 @@ const CreateSingleMeal = () => {
                       placeholder="Select a category"
                       style={selectStyle}
                     >
-                      {categories?.data.length === 0 ? (
-                        <Option value={"pasta"}>{"Pasta"}</Option>
-                      ) : (
+                      { 
                         categories?.data?.map((category, index) => (
                           <Option key={index} value={category?.name}>
-                            {category?.name || "Pasta"}
+                            {category?.name}
                           </Option>
-                        ))
+                        )
                       )}
                     </Select>
                   </Form.Item>
