@@ -31,10 +31,7 @@ const CustomerMap = () => {
     data: CustomarData,
     error: queryError,
     isLoading: queryLoading,
-  } = useCustomerMapAnalysisQuery(undefined, {
-    refetchOnFocus: true,
-    refetchOnReconnect: true,
-  });
+  } = useCustomerMapAnalysisQuery(undefined, {pollingInterval: 5000});
 
   const mappedData =
     CustomarData?.data?.map((item) => ({

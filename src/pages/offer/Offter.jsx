@@ -34,11 +34,10 @@ const columns = [
 
 const Offer = () => {
   const path = useLocation();
-  const { data: offer, isLoading } = useGetAllOfferQuery();
-
   const [shopId, setShopId] = useState(() => localStorage.getItem("shopId") || "");
 
   const { data: allShop, error: queryError, isLoading: queryLoading } = useAllShopQuery();
+  const { data, isLoading } = useGetAllOfferQuery(shopId, { pollingInterval: 5000 }); // Enable real-time updates
 
   useEffect(() => {
     if (allShop?.data?.length && !shopId) {
@@ -53,8 +52,6 @@ const Offer = () => {
     localStorage.setItem("shopId", value);
   };
 
-  const { data } = useGetAllOfferQuery(shopId);
-
   return (
     <div className="w-full pt-10 space-y-20">
       <div>
@@ -67,19 +64,19 @@ const Offer = () => {
                 style={{ minWidth: 150 }}
                 onChange={handleChange}
                 prefix={<MdTune className="text-xl text-gray-600" />}
-                placeholder={queryLoading ? "Loading..." : allShop?.data?.shops?.length === 0 ? "No shops available" : "Select your shop"}
-                disabled={queryLoading || allShop?.data?.shops?.length === 0}  // Disable if no shops or loading
+                placeholder={queryLoading ? "Loading..." : allShop?.data?.length === 0 ? "No shops available" : "Select your shop"}
+                disabled={queryLoading || allShop?.data?.length === 0} 
               >
                 {queryLoading ? (
                   <Option value="" disabled>
                     <Spin size="small" /> Loading...
                   </Option>
-                ) : allShop?.data?.shops?.length === 0 ? (
+                ) : allShop?.data?.length === 0 ? (
                   <Option value="" disabled>
                     No shops available
                   </Option>
                 ) : (
-                  allShop?.data?.shops?.map((shop) => (
+                  allShop?.data?.shops.map((shop) => (
                     <Option key={shop._id} value={shop._id}>
                       {shop.shopName}
                     </Option>

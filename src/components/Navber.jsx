@@ -6,7 +6,7 @@ import { CiSearch } from "react-icons/ci";
 import { useLocation, useNavigate } from "react-router-dom";
 import massageNotify from "../assets/notification.png";
 import { useProfileQuery } from "../features/profile/profileApi";
-import Avator from "../assets/avator.png";
+import Avator from "../assets/avator2.png";
 import {
   useGetNotificationQuery,
   useReadNotificationMutation,
@@ -30,13 +30,12 @@ const NotificationPopup = () => {
     refetchOnReconnect: true,
   });
 
-  const [readNotification, { isLoading: updateLoading }] = useReadNotificationMutation();
+  const [readNotification, {isLoading:updateLoading } ] = useReadNotificationMutation();
 
   useEffect(() => {
     socketRef.current = io(baseURL);
 
     socketRef.current.on("connect", () => {
-      console.log("Socket connected:", socketRef.current.id);
     });
 
     const handleNewNotification = (notification) => {
@@ -81,19 +80,13 @@ const NotificationPopup = () => {
   const handleSearch = (e) => {
     const searchQuery = encodeURIComponent(e.target.value);
     if (!e.target.value) {
-      // If search query is empty, navigate to the base path
       if (path.pathname === "/order") {
         navigate("/order");
       } else if (path.pathname === "/earning") {
         navigate("/earning");
-      } else if (path.pathname === "/business-management") {
-        navigate("/business-management");
       }
     } else {
-      // If there's a search query, add it to the URL
-      if (path.pathname === "/order") {
-        navigate(`/order?search=${searchQuery}`);
-      } else if (path.pathname === "/business-management") {
+      if (path.pathname === "/business-management") {
         navigate(`/business-management?search=${searchQuery}`);
       } else if (path.pathname === "/earning") {
         navigate(`/earning?search=${searchQuery}`);
@@ -108,8 +101,14 @@ const NotificationPopup = () => {
       }
       refetch();
     } catch (error) {
-      console.error("Error updating notification:", error);
+      // console.error("Error updating notification:", error);
     }
+  };
+
+  // Function to handle See Details button click
+  const handleSeeDetailsClick = () => {
+    setVisible(false); // Close the modal
+    navigate("/settings/notification"); // Navigate to notification settings
   };
 
   const formatTime = (timestamp) => {
@@ -171,8 +170,8 @@ const NotificationPopup = () => {
             Hello, <b>{profile?.data?.name}</b>
           </span>
           <Avatar
-            src={profile?.data?.image ? `${baseURL}${profile?.data?.image}` : Avator}
-            size={40}
+            src={profile?.data?.image ? `${baseURL}${profile?.data?.image}` : `${Avator}`}
+            size={30}
           />
         </div>
 
@@ -205,7 +204,7 @@ const NotificationPopup = () => {
                   <div className="flex justify-center py-4">
                     <Spin size="small" />
                   </div>
-                ) : !notifications?.data?.result || notifications.data.result.length === 0 ? (
+                ) : notifications?.data?.result.length === 0 ? (
                   <div className="text-center text-gray-500">
                     <div className="flex justify-center">
                       <img
@@ -222,6 +221,7 @@ const NotificationPopup = () => {
                       Your notifications will appear on this page.
                     </p>
                     <Button
+                      onClick={handleSeeDetailsClick}
                       type="primary"
                       className="w-full"
                       size="large"

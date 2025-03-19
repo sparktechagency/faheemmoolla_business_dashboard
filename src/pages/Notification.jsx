@@ -155,7 +155,7 @@ const NotificationPopup = () => {
               <div className="w-full cursor-pointer">
                 {loading || updateLoading ? (
                   <div className="flex justify-center py-4">
-                    <Spin size="large" />
+                    <Spin size="small" />
                   </div>
                 ) : notifications.length === 0 ? (
                   <div className="text-center text-gray-500">
