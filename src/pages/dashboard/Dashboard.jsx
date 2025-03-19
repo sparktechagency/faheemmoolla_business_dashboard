@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { useAllCountAnalysisQuery } from "../../features/dashboard/dashboardApi";
 import CustomLoading from "../../components/CustomLoading";
 
@@ -19,6 +19,7 @@ import shop_order from "../../assets/icons/shop_order.png";
 import OrderData from "../../assets/icons/orderData.png";
 import down from "../../assets/icons/down.png";
 import SkeletonAnalysisCard from "../../components/SkeletonAnalysisCard ";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const {
@@ -30,12 +31,14 @@ const Dashboard = () => {
     refetchOnReconnect: true,
   });
 
-  if (queryError)
-    return <p className="text-red-500">Error: {queryError?.message}</p>;
-  // if (queryLoading) {
-  //   return <CustomLoading />;
-  // }
+  const navigate = useNavigate();
 
+  useEffect(() => {
+    if (status === "rejected" &&  queryError) {
+      localStorage.removeItem("businessToken");
+      navigate("/auth/login");
+    }
+  }, [ queryError, navigate]);
   const analysisCards = [
     {
       value: queryLoading? <div className="text-center"><Spin /></div> :  allShop?.data?.totalFoodSell,
