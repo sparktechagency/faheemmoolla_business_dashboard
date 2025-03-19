@@ -75,8 +75,8 @@ const MealManagement = () => {
 
   // Update displayed meals only when loading is complete and data has changed
   useEffect(() => {
-    if (!mealLoading && !isFetchingMeals && meals) {
-      setDisplayedMeals(meals);
+    if (!mealLoading && !isFetchingMeals) {
+      setDisplayedMeals(meals); // Always update displayedMeals when loading completes
     }
   }, [meals, mealLoading, isFetchingMeals]);
 
@@ -123,7 +123,7 @@ const MealManagement = () => {
         </Link>
       </div>
 
-      {isFetchingMeals || mealLoading || !displayedMeals ? (
+      {isFetchingMeals || mealLoading ? (
         <CustomLoading />
       ) : mealError ? (
         <div className="p-6 text-center rounded-2xl">
@@ -131,7 +131,7 @@ const MealManagement = () => {
             {mealError?.data?.message || "An error occurred while fetching meals."}
           </h2>
         </div>
-      ) : displayedMeals?.data?.length === 0 ? (
+      ) : !displayedMeals?.data?.length ? (
         <div className="p-6 text-center rounded-2xl">
           <h2 className="text-2xl font-semibold text-gray-800">No meals available for this shop.</h2>
         </div>

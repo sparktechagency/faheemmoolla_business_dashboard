@@ -56,12 +56,33 @@ const Order = () => {
   console.log("Fetched Orders:", getOrder);
   console.log("Pagination Data:", getOrder?.data?.pagination);
 
-  // Set default shop if none is selected
+  // Check for shops and handle cases with no shops
   useEffect(() => {
-    if (allShop?.data?.length && !shopId) {
-      const firstShopId = allShop.data[0]._id;
-      setShopId(firstShopId);
-      localStorage.setItem("shopId", firstShopId);
+    // If we have shops data from the API
+    if (allShop?.data?.shops) {
+      // Case 1: No shops exist at all
+      if (allShop.data.shops.length === 0) {
+        // Clear shopId since no shops exist
+        setShopId("");
+        localStorage.removeItem("shopId");
+      } 
+      // Case 2: Shops exist but current selection is invalid
+      else if (shopId) {
+        const shopExists = allShop.data.shops.some(shop => shop._id === shopId);
+        if (!shopExists) {
+          // Selected shop no longer exists, select first available shop
+          const firstShopId = allShop.data.shops[0]._id;
+          setShopId(firstShopId);
+          localStorage.setItem("shopId", firstShopId);
+        }
+      }
+      // Case 3: No shop selected but shops exist
+      else if (allShop.data.shops.length > 0 && !shopId) {
+        // Set default shop if none selected
+        const firstShopId = allShop.data.shops[0]._id;
+        setShopId(firstShopId);
+        localStorage.setItem("shopId", firstShopId);
+      }
     }
   }, [allShop, shopId]);
 
@@ -114,11 +135,6 @@ const Order = () => {
     setPage(newPage);
   };
 
-  // Show loading state
-  // if (shopLoading || orderLoading) {
-  //   return <CustomLoading />;
-  // }
-
   return (
     <div className="w-full">
       {/* Order Statistics */}
@@ -168,14 +184,16 @@ const Order = () => {
 
           <ConfigProvider>
             <Select
-              value={shopLoading ? "Loading..." : shopId}
+              value={shopLoading ? "Loading..." : (allShop?.data?.shops?.length ? shopId : "")}
               size="large"
               style={{ minWidth: 150 }}
               onChange={handleShopChange}
               prefix={<MdTune className="text-xl text-gray-600" />}
+              placeholder="No shops available"
+              disabled={!allShop?.data?.shops?.length}
             >
               {allShop?.data?.shops?.length > 0 ? (
-                allShop?.data?.shops?.map((shop) => (
+                allShop.data.shops.map((shop) => (
                   <Option key={shop._id} value={shop._id}>
                     {shop.shopName}
                   </Option>
@@ -190,22 +208,30 @@ const Order = () => {
 
       {/* Orders Table and Pagination with Loading Spinner */}
       <Spin spinning={orderLoading} tip="Loading..." size="small">
-        <Table
-          columns={columns}
-          location={location.pathname}
-          data={filteredOrders}
-          renderRow={(item, i) => <TableRow key={i} item={item} columns={columns} />}
-        />
+        {allShop?.data?.shops?.length > 0 ? (
+          <>
+            <Table
+              columns={columns}
+              location={location.pathname}
+              data={filteredOrders}
+              renderRow={(item, i) => <TableRow key={i} item={item} columns={columns} />}
+            />
 
-        {/* Pagination */}
-        <div className="flex justify-end mt-4">
-          <Pagination
-            current={page}
-            total={totalOrders}
-            pageSize={limit}
-            onChange={handlePageChange}
-          />
-        </div>
+            {/* Pagination */}
+            <div className="flex justify-end mt-4">
+              <Pagination
+                current={page}
+                total={totalOrders}
+                pageSize={limit}
+                onChange={handlePageChange}
+              />
+            </div>
+          </>
+        ) : (
+          <div className="py-8 text-center">
+            <p className="text-lg">No shops available. Please add a shop first.</p>
+          </div>
+        )}
       </Spin>
     </div>
   );

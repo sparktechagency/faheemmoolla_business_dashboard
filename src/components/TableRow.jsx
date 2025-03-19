@@ -431,7 +431,7 @@ const OrderRow = ({ item, list, location }) => {
           location === "/offer" && "text-start px-2"
         } ${location === "/earning" && "text-start px-4"} overflow-ellipsis`}
       >
-        {endDate} {location === "/earning" && item?.totalAmount}
+        {endDate} {location === "/earning" && "$"+item?.businessEarning}
       </div>
       <div
         className={`px-3 py-3 ${
@@ -440,7 +440,7 @@ const OrderRow = ({ item, list, location }) => {
       >
         {" "}
         {location === "/offer" && discountPrice}{" "}
-        {location === "/earning" && shopId?.revenue}{location === "/earning" && "%"}
+        {location === "/earning" && item?.revenue}{location === "/earning" && "%"}
         {location === "/order" && item?.totalAmount}
       </div>
       <div
@@ -462,7 +462,7 @@ const OrderRow = ({ item, list, location }) => {
       >
         {status} {location === "/offer" && orderStatus}{" "}
         {location === "/earning" && orderStatus}{" "}
-        {location === "/order" && item?.shopId?.revenue}{" "}
+        {location === "/order" && item?.revenue}{" "}
         {location === "/order" && "%"}
       </div>
       <div

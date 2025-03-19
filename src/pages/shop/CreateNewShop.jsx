@@ -93,7 +93,7 @@ const CreateSingleShop = () => {
       shopLocationName: values?.shopLocationName,
       shopLocation: {
         coordinates: [
-          parseFloat(values?.Latitude),
+          parseFloat(values?.latitude),
           parseFloat(values?.longitude),
         ],
       },
@@ -260,7 +260,7 @@ const CreateSingleShop = () => {
                   <Form.Item
                     label="Latitude"
                     className="custom-label"
-                    name="Latitude"
+                    name="latitude"
                     rules={[
                       {
                         required: true,

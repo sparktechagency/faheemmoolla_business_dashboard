@@ -35,7 +35,7 @@ const columns = [
   "Location",
   "Offer",
   "Item & Qty",
-  "Price",
+  "Revinue",
   "Service Charge",
   "Status",
   "Action",
