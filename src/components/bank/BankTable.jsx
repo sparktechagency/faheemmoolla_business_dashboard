@@ -5,7 +5,7 @@ import CustomLoading from '../CustomLoading';
 import { Spin } from 'antd';
 
 const BankTable = () => {
-  const { data: allShop, error: queryError, isLoading: queryLoading } = useAllShopQuery({pollingInterval: 5000});
+  const { data: allShop, error: queryError, isLoading: queryLoading } = useAllShopQuery();
 
   const bankDetails = useMemo(() => allShop?.data?.shops?.map((shop) => shop?.bankCard) || [], [allShop?.data]);
 

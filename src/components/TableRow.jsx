@@ -16,19 +16,19 @@ const OrderRow = ({ item, list, location }) => {
   const [detailsId, setDetailsId] = useState(null);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const { data: details, isLoading } = useGetOfferDetalsQuery(detailsId, {
-    skip: !detailsId || location !== "/offer", pollingInterval: 5000 
+    skip: !detailsId || location !== "/offer"
   });
 
   const { data: order, isLoading: orderLoading } = useSingleOrderQuery(
     detailsId,
     {
-      skip: !detailsId || location !== "/order", pollingInterval: 5000 
+      skip: !detailsId || location !== "/order"
     }
   );
 
   const { data: earningDetails, isLoading: earningLoadingdetails } =
     useGetEarningsDetailQuery(detailsId, {
-      skip: !detailsId || location !== "/earning", pollingInterval: 5000
+      skip: !detailsId || location !== "/earning"
     });
 
   const [updateOrder, { isLoading: isLoadingStatus }] =

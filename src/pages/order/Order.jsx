@@ -38,13 +38,13 @@ const Order = () => {
   const [limit, setLimit] = useState(10);
 
   // Fetch shop data
-  const { data: allShop, isLoading: shopLoading } = useAllShopQuery(undefined, { refetchOnFocus: true, refetchOnReconnect: true , pollingInterval: 5000 });
+  const { data: allShop, isLoading: shopLoading } = useAllShopQuery(undefined, { refetchOnFocus: true, refetchOnReconnect: true });
 
   // Fetch order analysis
-  const { data: analysisData, isLoading: analysisLoading } = useGetOrderAnalysisQuery(shopId, { refetchOnFocus: true, refetchOnReconnect: true ,pollingInterval: 5000 });
+  const { data: analysisData, isLoading: analysisLoading } = useGetOrderAnalysisQuery(shopId, { refetchOnFocus: true, refetchOnReconnect: true });
 
   // Fetch orders with pagination
-  const { data: getOrder, isLoading: orderLoading } = useGetOrderQuery({ shopId, page, limit, pollingInterval: 5000 }, { refetchOnFocus: true, refetchOnReconnect: true });
+  const { data: getOrder, isLoading: orderLoading } = useGetOrderQuery({ shopId, page, limit}, { refetchOnFocus: true, refetchOnReconnect: true });
   console.log(getOrder)
 
   // Extract order data

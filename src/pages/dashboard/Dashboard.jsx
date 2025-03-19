@@ -1,7 +1,5 @@
 import { lazy, Suspense, useEffect } from "react";
 import { useAllCountAnalysisQuery } from "../../features/dashboard/dashboardApi";
-import CustomLoading from "../../components/CustomLoading";
-
 import { Skeleton, Spin } from "antd";
 
 const AnalysisCard = lazy(() => import("../../components/AnalysisCard"));

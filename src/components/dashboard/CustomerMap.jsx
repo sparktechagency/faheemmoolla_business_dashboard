@@ -31,7 +31,7 @@ const CustomerMap = () => {
     data: CustomarData,
     error: queryError,
     isLoading: queryLoading,
-  } = useCustomerMapAnalysisQuery(undefined, {pollingInterval: 5000});
+  } = useCustomerMapAnalysisQuery(undefined);
 
   const mappedData =
     CustomarData?.data?.map((item) => ({

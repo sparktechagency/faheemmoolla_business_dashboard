@@ -4,7 +4,7 @@ import arrow from "./../assets/icons/arrow.svg";
 
 const TermsConditions = () => {
   const router = useNavigate();
-  const { data, isLoading, error } = useSettingQuery({ pollingInterval: 5000 });
+  const { data, isLoading, error } = useSettingQuery();
 
   let privacyContent = "<p>No privacy policy available.</p>"; // Default fallback
   try {

@@ -37,7 +37,7 @@ const Offer = () => {
   const [shopId, setShopId] = useState(() => localStorage.getItem("shopId") || "");
 
   const { data: allShop, error: queryError, isLoading: queryLoading } = useAllShopQuery();
-  const { data, isLoading } = useGetAllOfferQuery(shopId, { pollingInterval: 5000 }); // Enable real-time updates
+  const { data, isLoading } = useGetAllOfferQuery(shopId); // Enable real-time updates
 
   useEffect(() => {
     if (allShop?.data?.length && !shopId) {
