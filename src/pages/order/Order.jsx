@@ -10,7 +10,7 @@ import Table from "../../components/Table";
 import TableRow from "../../components/TableRow";
 import { useGetOrderAnalysisQuery, useGetOrderQuery } from "../../features/order/orderApi";
 import { useAllShopQuery } from "../../features/shop/shopApi";
-import CustomLoading from "../../components/CustomLoading";
+
 
 const { Option } = Select;
 
@@ -19,8 +19,8 @@ const columns = [
   "Order Number",
   "User Name",
   "Location",
-  "Offer",
-  "Item & Qty",
+  "Item",
+  "Quantity",
   "Price",
   "Service Charge",
   "Status",
@@ -45,16 +45,12 @@ const Order = () => {
 
   // Fetch orders with pagination
   const { data: getOrder, isLoading: orderLoading } = useGetOrderQuery({ shopId, page, limit}, { refetchOnFocus: true, refetchOnReconnect: true });
-  console.log(getOrder)
 
   // Extract order data
   const totalOrders = getOrder?.data?.pagination?.total || 0;
   const totalPages = getOrder?.data?.pagination?.totalPage || 1;
   const orders = getOrder?.data?.order || [];
 
-  // Debugging API response
-  console.log("Fetched Orders:", getOrder);
-  console.log("Pagination Data:", getOrder?.data?.pagination);
 
   // Check for shops and handle cases with no shops
   useEffect(() => {

@@ -52,6 +52,7 @@ const OrderRow = ({ item, list, location }) => {
     createdAt,
   } = item;
 
+
   const dateObj = new Date(createdAt);
   const formattedDate = `${dateObj.getDate().toString().padStart(2, "0")}-${(
     dateObj.getMonth() + 1
@@ -94,7 +95,6 @@ const OrderRow = ({ item, list, location }) => {
     setDropdownVisible(visible);
   };
 
-  console.log(item);
 
   const dropdownContent = (
     <Card className="relative shadow-lg w-52">
@@ -124,8 +124,6 @@ const OrderRow = ({ item, list, location }) => {
     .padStart(2, "0")}-${(detailsearning.getMonth() + 1)
     .toString()
     .padStart(2, "0")}-${detailsearning.getFullYear()}`;
-
-  console.log(order);
 
   const renderModalContent = () => (
     <>
@@ -207,77 +205,28 @@ const OrderRow = ({ item, list, location }) => {
           <CustomLoading />
         ) : (
           <>
-            <div className="mt-7">
-              <img
-                className="rounded-md"
-                src={shop}
-                alt="Order Product"
-                width="100%"
-                height="100%"
-              />
+           
+<div className="pt-6 space-y-4">
+        {earningDetails?.data?.products.map((order, index) => (
+          <div key={index} className="flex p-3 border rounded-lg border-amber-200">
+            <div className="w-24 h-16 mr-4">
+              <img src={`${baseURL}${order?.productId?.image}`} alt={order.item} className="object-cover w-full h-full rounded-lg" />
             </div>
-            <div className="p-4 mx-auto mt-5 space-y-3 border rounded-lg border-primary max-w-max">
-              <div className="flex gap-1 text-lg font-medium">
-                <p>
-                  <strong className="text-black">Order Number:</strong>
-                </p>
-                <p className="text-black ">
-                  {earningDetails?.data?.orderNumber}
-                </p>
-              </div>
-              {/* <div className="flex items-center gap-1 text-lg font-medium">
-                <p>
-                  <strong className="text-black">User Name:</strong>
-                </p>
-                <p className="text-black ">{"jhon"}</p>
-              </div> */}
-              {/* <div className="flex items-center gap-1 text-lg font-medium">
-                <p>
-                  <strong className="text-black ">Location:</strong>
-                </p>
-                <p className="text-black ">{"Dhaka"}</p>
-              </div> */}
-              <div className="flex items-center gap-1 text-lg font-medium">
-                <p>
-                  <strong className="text-black ">Date:</strong>
-                </p>
-                <p className="text-black ">{EarningDetails}</p>
-              </div>
-              <div className="flex items-center gap-1 text-lg font-medium">
-                <p>
-                  <strong className="text-black text-nowrap">
-                    Order Item & Qty:
-                  </strong>
-                </p>
-                <p className="text-black text-nowrap">
-                  {earningDetails?.data?.products
-                    ?.map((item) => `${item.productName} * ${item.quantity}`)
-                    .join(", ")}
-                </p>
-              </div>
-              <div className="flex items-center gap-1 text-lg font-medium">
-                <p>
-                  <strong className="text-black ">Price:</strong>
-                </p>
-                <p className="text-black ">
-                  ${earningDetails?.data?.totalAmount}
-                </p>
-              </div>
-              <div className="flex items-center gap-1 text-lg font-medium">
-                <p>
-                  <strong className="text-black ">App Service charge:</strong>
-                </p>
-                <p className="text-black ">{"10%"}</p>
-              </div>
-              <div className="flex items-center gap-1 text-lg font-medium">
-                <p>
-                  <strong className="text-black ">Status:</strong>
-                </p>
-                <p className="text-black ">
-                  {earningDetails?.data?.orderStatus}
-                </p>
+            <div className="flex-1">
+              <div className="text-sm">
+                
+                <p><span className="font-medium">Product Name:</span> {order.productName}</p>
+                
+                
+                <p><span className="font-medium">Item & Qty:</span> {order.item}*{order.quantity}</p>
+                <p><span className="font-medium">Price:</span> ${order.price}</p>
               </div>
             </div>
+          </div>
+        ))}
+      </div>
+
+            
           </>
         ))}
 
@@ -288,53 +237,28 @@ const OrderRow = ({ item, list, location }) => {
           </div>
         ) : (
           <>
-            <div className="mt-7">
-              <img
-                className="rounded-md"
-                src={shop}
-                alt="Order Product"
-                width="100%"
-                height="100%"
-              />
+
+   <div className="space-y-4 pt-7">
+        {order?.data?.products.map((order, index) => (
+          <div key={index} className="flex p-3 border rounded-lg border-amber-200">
+            <div className="w-24 h-16 mr-4">
+              <img src={`${baseURL}${order.productId.image}`} alt={order.item} className="object-cover w-full h-full rounded-lg" />
             </div>
-            <div className="p-4 mx-auto mt-5 space-y-3 border rounded-lg max-w-min border-primary">
-              <div className="flex gap-1 text-lg font-medium">
-                <p>
-                  <strong className="text-black">Order Number:</strong>
-                </p>
-                <p className="text-black ">{order?.data?.orderNumber}</p>
-              </div>
-              <div className="flex items-center gap-1 text-lg font-medium">
-                <p>
-                  <strong className="text-black text-nowrap">
-                    Order Item & Qty:
-                  </strong>
-                </p>
-                <p className="text-black text-nowrap">
-                  {order?.data?.products
-                    ?.map((item) => `${item.productName} * ${item.quantity}`)
-                    .join(", ")}
-                </p>
-              </div>
-              <div className="flex items-center gap-1 text-lg font-medium">
-                <p>
-                  <strong className="text-black ">Price:</strong>
-                </p>
-                <p className="text-black ">${order?.data?.totalAmount}</p>
-              </div>
-              <div className="flex items-center gap-1 text-lg font-medium">
-                <p>
-                  <strong className="text-black ">App Service charge:</strong>
-                </p>
-                <p className="text-black "> {order?.data?.shopId?.revenue}%</p>
-              </div>
-              <div className="flex items-center gap-1 text-lg font-medium">
-                <p>
-                  <strong className="text-black ">Status:</strong>
-                </p>
-                <p className="text-black ">{order?.data?.orderStatus}</p>
+            <div className="flex-1">
+              <div className="text-sm">
+                
+                <p><span className="font-medium">Product Name:</span> {order.productName}</p>
+                
+                
+                <p><span className="font-medium">Item & Qty:</span> {order.item}*{order.quantity}</p>
+                <p><span className="font-medium">Price:</span> ${order.price}</p>
               </div>
             </div>
+          </div>
+        ))}
+      </div>
+
+
           </>
         ))}
 
@@ -350,6 +274,9 @@ const OrderRow = ({ item, list, location }) => {
       </div>
     </>
   );
+
+
+  // console.log(item)
 
   return (
     <div
@@ -392,7 +319,7 @@ const OrderRow = ({ item, list, location }) => {
       >
         {offerTitle} {shopId?.shopAddress}
       </div>
-      <div
+      {/* <div
         className={` py-3 overflow-hidden ${
           location === "/offer" && "text-start px-1.5"
         } ${location === "/earning" && "text-start px-4"}  ${
@@ -402,28 +329,60 @@ const OrderRow = ({ item, list, location }) => {
         {shopCategory}{" "}
         {location === "/earning" && (userId?.orders === true ? "Yes" : "No")}{" "}
         {location === "/order" && "pronab"}
-      </div>
+      </div> */}
       <div
         className={` py-3 overflow-hidden ${
-          location === "/offer" && "text-start px-1"
+          location === "/offer" && "text-start px-1 ml-3"
         } ${location === "/earning" && "text-start px-4"}  ${
-          location === "/order" && "text-center  px-4"
+          location === "/order" && "text-center  px-4 ml-7"
         }  `}
       >
-        {stateDate}{" "}
+        {item?.itemId?.category}{" "}
         {location === "/earning" &&
-          products.map((items) => (
-            <span
-              key={items?.productName}
-            >{`${items?.productName} * ${items?.quantity}`}</span>
-          ))}{" "}
+         <span>{products.length}</span>
+}
         {location === "/order" &&
-          products.map((items) => (
-            <span
-              key={items?.productName}
-            >{`${items?.productName} * ${items?.quantity}`}</span>
-          ))}
+            <span>{products.length}</span>}
       </div>
+
+
+
+
+
+      {
+        location === "/order" && <div
+        className={`py-3 overflow-hidden  ${
+          location === "/order" && "text-center px-4 ml-20"
+        } ${
+          location === "/earning" && "text-start ml-5 "
+        }` }
+      >
+        {location === "/order"  && (
+          <span>
+            {products.reduce((sum, product) => sum + product.quantity, 0)}
+          </span>
+        )}
+      </div>
+      }
+
+      
+{
+        location === "/earning" && <div
+        className={`py-3 overflow-hidden  ${
+          location === "/order" && "text-center px-4 ml-20"
+        } ${
+          location === "/earning" && "text-start ml-5 "
+        }` }
+      >
+        {location === "/earning"  && (
+          <span>
+            {products.reduce((sum, product) => sum + product.quantity, 0)}
+          </span>
+        )}
+      </div>
+      }
+
+      
       <div
         className={`px-3 py-3 overflow-hidden ${
           location === "/offer" && "text-start px-2"
@@ -431,19 +390,30 @@ const OrderRow = ({ item, list, location }) => {
       >
         {endDate} {location === "/earning" && "$"+item?.businessEarning}
       </div>
+
+          {
+            location === "/offer" &&  <div
+            className={`px-3 py-3 overflow-hidden ${
+              location === "/offer" && "text-start px-2 -ml-1"
+            } overflow-ellipsis`}
+          >
+            {endDate} 
+          </div>
+          }
+
       <div
         className={`px-3 py-3 ${
-          location === "/offer" && "text-start px-[8px]"
+          location === "/offer" && "text-start px-[8px] ml-2"
         } ${location === "/earning" && "text-start px-5"} truncate`}
       >
         {" "}
-        {location === "/offer" && discountPrice}{" "}
+        {location === "/offer" && "$"+discountPrice}{" "}
         {location === "/earning" && item?.revenue}{location === "/earning" && "%"}
-        {location === "/order" && item?.totalAmount}
+        {location === "/order" && "$"+item?.totalAmount}
       </div>
       <div
         className={` py-3 overflow-hidden ${
-          location === "/offer" && "text-center px-2"
+          location === "/offer" && "text-center px-2 -ml-5"
         } ${location === "/earning" && "text-start ml-2"} rounded ${
           orderStatus === "active" || status === "active"
             ? "bg-green-500 text-white"
@@ -476,7 +446,7 @@ const OrderRow = ({ item, list, location }) => {
               ? ""
               : location === "/offer"
               ? ""
-              : "border border-green-500"
+              : "border w-full border-green-500"
           } rounded`}
         >
           <button
@@ -484,18 +454,21 @@ const OrderRow = ({ item, list, location }) => {
               location === "/earning"
                 ? "bg-primary p-2 text-white"
                 : `box-border border ${
-                    location === "/order" ? "px-2.5" : "px-10"
-                  }  py-2 border-primary `
+                    location === "/order" ? "px-8" : "px-10"
+                  }  py-1.5 border-primary `
             } rounded`}
             onClick={() => showViewModal(_id)}
           >
-            View Details
+            {location === "/earning" && "view Details"}
+            {location === "/order" && "view"}
+            {location === "/offer" && "View Details"}
           </button>
           <Modal
             title=""
             visible={isViewModalOpen}
             onOk={handleViewOk}
             onCancel={handleViewCancel}
+            centered
             footer={null}
             style={{ width: "400px", padding: "0px" }}
           >

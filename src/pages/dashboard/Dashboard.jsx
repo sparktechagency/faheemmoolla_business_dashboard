@@ -69,7 +69,7 @@ const Dashboard = () => {
       {/* Analysis Cards with Skeleton Loading */}
       <div className="grid items-center grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-4">
   {analysisCards.map((card, index) => (
-    <Suspense key={index} fallback={<SkeletonAnalysisCard />}>
+   <div key={index}>
       <AnalysisCard
         value={card.value}
         title={card.title}
@@ -77,57 +77,21 @@ const Dashboard = () => {
         percentage={card.percentage}
         OrderDatapercentage={card.orderData || ""}
       />
-    </Suspense>
+</div>
   ))}
 </div>
 
 
       {/* PieCharts and OrderChart with Skeleton Loading */}
       <div className="flex items-center justify-between gap-10">
-        <Suspense
-          fallback={
-            <Skeleton.Node
-              active
-              className="w-full h-[300px] rounded-lg bg-gray-200"
-            />
-          }
-        >
           <PieCharts />
-        </Suspense>
-        <Suspense
-          fallback={
-            <Skeleton.Node
-              active
-              className="w-full h-[300px] rounded-lg bg-gray-200"
-            />
-          }
-        >
           <OrderChart />
-        </Suspense>
       </div>
 
       {/* Revenue and CustomerMap with Skeleton Loading */}
       <div className="flex items-center justify-between gap-10">
-        <Suspense
-          fallback={
-            <Skeleton.Node
-              active
-              className="w-full h-[300px] rounded-lg bg-gray-200"
-            />
-          }
-        >
           <Revenue />
-        </Suspense>
-        <Suspense
-          fallback={
-            <Skeleton.Node
-              active
-              className="w-full h-[300px] rounded-lg bg-gray-200"
-            />
-          }
-        >
           <CustomerMap />
-        </Suspense>
       </div>
     </div>
   );

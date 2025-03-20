@@ -31,17 +31,17 @@ const Table = ({ columns, data = [], location }) => {
                   location === "/order" ? "flex justify-center -ml-[90px]" : "",
                 "User Name":
                   location === "/order"
-                    ? "flex justify-center -ml-[130px]"
+                    ? "flex justify-center -ml-[90px]"
                     : "",
                 Location:
-                  location === "/order" ? "flex justify-center -ml-[90px]" : "",
+                  location === "/order" ? "flex justify-center -ml-[85px]" : "",
                 "Item & Qty":
                   location === "/order"
-                    ? "flex justify-center -ml-[150px]"
+                    ? "flex justify-center -ml-[120px]"
                     : "",
                 Offer:
                   location === "/order"
-                    ? "flex justify-center -ml-[150px]"
+                    ? "flex justify-center -ml-[130px]"
                     : "",
                 Status: location === "/order" ? "flex justify-center" : "",
                 Action:
@@ -49,7 +49,7 @@ const Table = ({ columns, data = [], location }) => {
                     ? "text-center ml-[80px]"
                     : location === "/earning"
                     ? "text-center ml-[35px]"
-                    : "",
+                    : "ml-[85px]",
               };
               return columnStyles[column] || "";
             }, [column, location]);
