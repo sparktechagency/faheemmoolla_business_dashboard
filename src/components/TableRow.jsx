@@ -96,6 +96,9 @@ const OrderRow = ({ item, list, location }) => {
   };
 
 
+
+  console.log(order?.data?.products)
+
   const dropdownContent = (
     <Card className="relative shadow-lg w-52">
       {isLoadingStatus && (
@@ -242,7 +245,7 @@ const OrderRow = ({ item, list, location }) => {
         {order?.data?.products.map((order, index) => (
           <div key={index} className="flex p-3 border rounded-lg border-amber-200">
             <div className="w-24 h-16 mr-4">
-              <img src={`${baseURL}${order.productId.image}`} alt={order.item} className="object-cover w-full h-full rounded-lg" />
+              <img src={`${baseURL}${order?.productId?.image}`} alt={order.item} className="object-cover w-full h-full rounded-lg" />
             </div>
             <div className="flex-1">
               <div className="text-sm">

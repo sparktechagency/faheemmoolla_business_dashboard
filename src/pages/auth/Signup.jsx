@@ -17,7 +17,8 @@ export default function LoginPage() {
   const onFinish = async (values) => {
       const data = {name:values.name,phone:values.contact,email:values.email,password:values.password};
     try {
-       await signup(data).unwrap();
+      const response =  await signup(data).unwrap();
+      localStorage.setItem("businessLoginId", response?.data?._id);
       route(`/auth/signup/verify?email=${values?.email}`);
     } catch (error) {
       if(error.status === 400) {
