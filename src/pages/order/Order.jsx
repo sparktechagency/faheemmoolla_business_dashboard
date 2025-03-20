@@ -10,7 +10,8 @@ import Table from "../../components/Table";
 import TableRow from "../../components/TableRow";
 import { useGetOrderAnalysisQuery, useGetOrderQuery } from "../../features/order/orderApi";
 import { useAllShopQuery } from "../../features/shop/shopApi";
-
+import io from "socket.io-client";
+import { baseURL } from "../../utils/BaseURL";
 
 const { Option } = Select;
 
@@ -26,6 +27,10 @@ const columns = [
   "Status",
 ];
 
+// Initialize socket connection
+// Replace 'http://your-backend-url' with your actual backend URL
+const socket = io(baseURL);
+
 const Order = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -36,21 +41,66 @@ const Order = () => {
   const [shopId, setShopId] = useState(() => localStorage.getItem("shopId") || "");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
+  const [forceRefetch, setForceRefetch] = useState(0); // For manual refetching
 
   // Fetch shop data
-  const { data: allShop, isLoading: shopLoading } = useAllShopQuery(undefined, { refetchOnFocus: true, refetchOnReconnect: true });
+  const { data: allShop, isLoading: shopLoading } = useAllShopQuery(undefined, { 
+    refetchOnFocus: true, 
+    refetchOnReconnect: true 
+  });
 
-  // Fetch order analysis
-  const { data: analysisData, isLoading: analysisLoading } = useGetOrderAnalysisQuery(shopId, { refetchOnFocus: true, refetchOnReconnect: true });
+  // Fetch order analysis with socket-triggered refetching
+  const { data: analysisData, isLoading: analysisLoading, refetch: refetchAnalysis } = useGetOrderAnalysisQuery(
+    shopId, 
+    { 
+      refetchOnFocus: true, 
+      refetchOnReconnect: true,
+      skip: !shopId
+    }
+  );
 
-  // Fetch orders with pagination
-  const { data: getOrder, isLoading: orderLoading } = useGetOrderQuery({ shopId, page, limit}, { refetchOnFocus: true, refetchOnReconnect: true });
+  // Fetch orders with pagination and socket-triggered refetching
+  const { 
+    data: getOrder, 
+    isLoading: orderLoading, 
+    refetch: refetchOrders 
+  } = useGetOrderQuery(
+    { shopId, page, limit, forceRefetch }, // Added forceRefetch to dependencies
+    { 
+      refetchOnFocus: true, 
+      refetchOnReconnect: true,
+      skip: !shopId
+    }
+  );
+
+  // Socket.io connection and event listeners
+  useEffect(() => {
+    // Listen for new orders
+    socket.on(`notification::${localStorage.getItem("businessLoginId")}`, (data) => {
+      if (!shopId || data.shopId === shopId) {
+        refetchOrders();
+        refetchAnalysis();
+      }
+    });
+
+    // Listen for order status updates
+    socket.on(`notification::${localStorage.getItem("businessLoginId")}`, (data) => {
+      if (!shopId || data.shopId === shopId) {
+        refetchOrders();
+        refetchAnalysis();
+      }
+    });
+
+    // Cleanup socket listeners on component unmount
+    return () => {
+      socket.off(`notification::${localStorage.getItem("businessLoginId")}`);
+    };
+  }, [shopId, refetchOrders, refetchAnalysis]);
 
   // Extract order data
   const totalOrders = getOrder?.data?.pagination?.total || 0;
   const totalPages = getOrder?.data?.pagination?.totalPage || 1;
   const orders = getOrder?.data?.order || [];
-
 
   // Check for shops and handle cases with no shops
   useEffect(() => {
@@ -129,6 +179,11 @@ const Order = () => {
   const handlePageChange = (newPage) => {
     console.log("Changing page to:", newPage);
     setPage(newPage);
+  };
+
+  // Manual refresh handler for testing
+  const handleManualRefresh = () => {
+    setForceRefetch(prev => prev + 1); // Increment to trigger refetch
   };
 
   return (
