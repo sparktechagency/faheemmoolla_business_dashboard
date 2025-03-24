@@ -136,15 +136,17 @@ const CreateSingleMeal = () => {
     // console.log(values?.collectionTime);
     const openTime = values.collectionTime[0];
     const closeTime = values.collectionTime[1];
-
+  
     const open = `${openTime.$H < 10 ? "0" : ""}${openTime.$H}:${
-      openTime.$M < 10 ? "0" : ""
-    }${openTime.$M}`;
+      openTime.$m < 10 ? "0" : ""
+    }${openTime.$m}`;
     const close = `${closeTime.$H < 10 ? "0" : ""}${closeTime.$H}:${
-      closeTime.$M < 10 ? "0" : ""
-    }${closeTime.$M}`;
+      closeTime.$m < 10 ? "0" : ""
+    }${closeTime.$m}`;
     const time = `${open} to ${close}`;
 
+    
+  
     const mealData = {
       shopId: localStorage.getItem("shopId"),
       name: values.name,
@@ -157,10 +159,10 @@ const CreateSingleMeal = () => {
       dietaryPreference: values?.dietaryPreference,
       description: values.description,
     };
-
+  
     const formData = new FormData();
     formData.append("data", JSON.stringify(mealData));
-
+  
     // Ensure only one image is appended
     if (fileList.length > 0) {
       formData.append("image", fileList[0]?.originFileObj);

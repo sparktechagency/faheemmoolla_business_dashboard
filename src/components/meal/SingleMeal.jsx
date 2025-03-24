@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
 const SingleMeal = ({ items }) => {
+  
   const [mealStatus, setMealStatus] = useState(items.mealStatus);
   const [isLoading, setIsLoading] = useState(false);
   const [deleteMeal, { isLoading: mealDeleteLoading }] =
@@ -18,7 +19,6 @@ const SingleMeal = ({ items }) => {
   const [updateMealStatus, { isLoading: mealStatusLoading }] =
     useUpdateMealStatusMutation();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [direction, setDirection] = useState(0);
 

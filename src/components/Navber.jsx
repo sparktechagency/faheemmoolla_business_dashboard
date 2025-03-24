@@ -23,42 +23,85 @@ const NotificationPopup = () => {
   const socketRef = useRef(null);
   const popupRef = useRef(null);
   const iconRef = useRef(null);
+  const notificationContainerRef = useRef(null);
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   const { data: profile } = useProfileQuery();
-  const { data: notifications, refetch, isLoading } = useGetNotificationQuery(undefined, {
+  const {
+    data: notifications,
+    refetch,
+    isLoading,
+  } = useGetNotificationQuery(undefined, {
     refetchOnFocus: true,
     refetchOnReconnect: true,
   });
 
-  const [readNotification, {isLoading:updateLoading } ] = useReadNotificationMutation();
+  const [readNotification, { isLoading: updateLoading }] =
+    useReadNotificationMutation();
 
+  // Update current time periodically for accurate relative time display
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000); // Update every minute
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Socket connection for real-time notifications
   useEffect(() => {
     socketRef.current = io(baseURL);
 
     socketRef.current.on("connect", () => {
+      console.log("Socket connected");
     });
 
     const handleNewNotification = (notification) => {
+      // Force immediate refetch when new notification arrives
       refetch();
+      setCurrentTime(new Date()); // Update current time for accurate relative time
+
+      // When a new notification arrives, scroll to top
+      if (notificationContainerRef.current && visible) {
+        notificationContainerRef.current.scrollTop = 0;
+      }
     };
 
-    socketRef.current.on(`notification::${localStorage.getItem("businessLoginId")}`, handleNewNotification);
+    socketRef.current.on(
+      `notification::${localStorage.getItem("businessLoginId")}`,
+      handleNewNotification
+    );
 
     return () => {
       if (socketRef.current) {
         socketRef.current.off("connect");
-        socketRef.current.off(`notification::${localStorage.getItem("businessLoginId")}`, handleNewNotification);
+        socketRef.current.off(
+          `notification::${localStorage.getItem("businessLoginId")}`,
+          handleNewNotification
+        );
         socketRef.current.disconnect();
       }
     };
-  }, [refetch]);
+  }, [refetch, visible]);
 
+  // Update loading state when query completes
   useEffect(() => {
     if (!isLoading) {
       setLoading(false);
     }
   }, [isLoading]);
 
+  // Scroll to top when notifications panel opens
+  useEffect(() => {
+    if (visible && notificationContainerRef.current) {
+      notificationContainerRef.current.scrollTop = 0;
+      // Refetch notifications when panel opens to ensure fresh data
+      refetch();
+      setCurrentTime(new Date()); // Update current time for accurate relative time
+    }
+  }, [visible, refetch]);
+
+  // Click outside to close popup
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -98,10 +141,10 @@ const NotificationPopup = () => {
     try {
       if (!notification.read) {
         await readNotification(notification._id);
+        refetch();
       }
-      refetch();
     } catch (error) {
-      // console.error("Error updating notification:", error);
+      console.error("Error updating notification:", error);
     }
   };
 
@@ -113,8 +156,37 @@ const NotificationPopup = () => {
 
   const formatTime = (timestamp) => {
     const date = new Date(timestamp);
-    return moment(date).fromNow();
+    const now = new Date();
+    
+    // Convert to Bangladesh local timezone
+    const bdTime = new Date(date.toLocaleString("en-US", { timeZone: "Asia/Dhaka" }));
+    const nowBd = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Dhaka" }));
+  
+    const diffSeconds = Math.floor((nowBd - bdTime) / 1000);
+  
+    if (diffSeconds < 60) {
+      return "just now";
+    } else if (diffSeconds < 3600) {
+      return `${Math.floor(diffSeconds / 60)} min ago`;
+    } else if (diffSeconds < 86400) {
+      return `${Math.floor(diffSeconds / 3600)} hr ago`;
+    } else if (diffSeconds < 604800) {
+      return `${Math.floor(diffSeconds / 86400)} days ago`;
+    } else {
+      return bdTime.toLocaleDateString("en-US", {  
+        month: "short",
+        day: "numeric",
+        year: "numeric"
+      }); // Example: Mar 24, 2025
+    }
   };
+  
+  
+
+// const currentTimestamp = new Date('2025-03-24T08:16:25.437Z');  // Replace this with your actual timestamp
+// console.log(formatTime(currentTimestamp));  // Output: Correct time format
+
+
 
   const getTypeColor = (type) => {
     switch (type) {
@@ -129,17 +201,29 @@ const NotificationPopup = () => {
     }
   };
 
-  const unreadCount = notifications?.data?.result.filter(notif => !notif.read).length || 0;
+  const unreadCount =
+    notifications?.data?.result.filter((notif) => !notif.read).length || 0;
 
   const markAllAsRead = async () => {
     try {
-      await Promise.all(notifications.data.result.map(notif => readNotification(notif._id)));
+      await Promise.all(
+        notifications.data.result.map((notif) =>
+          !notif.read ? readNotification(notif._id) : Promise.resolve()
+        )
+      );
       refetch();
     } catch (error) {
       console.error("Error marking all as read:", error);
     }
   };
 
+  // Ensure notifications are sorted by createdAt (newest first)
+  const sortedNotifications = notifications?.data?.result
+    ? [...notifications.data.result].sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      )
+    : [];
+  formatTime("2025-03-24T08:16:25.437Z");
   return (
     <div className="flex items-center justify-between">
       {path.pathname === "/order" || path.pathname === "/earning" ? (
@@ -170,12 +254,21 @@ const NotificationPopup = () => {
             Hello, <b>{profile?.data?.name}</b>
           </span>
           <Avatar
-            src={profile?.data?.image ? `${baseURL}${profile?.data?.image}` : `${Avator}`}
+            src={
+              profile?.data?.image
+                ? `${baseURL}${profile?.data?.image}`
+                : `${Avator}`
+            }
             size={30}
           />
         </div>
 
-        <Badge count={unreadCount} className="ml-3 cursor-pointer" onClick={() => setVisible(!visible)} ref={iconRef}>
+        <Badge
+          count={unreadCount}
+          className="ml-3 cursor-pointer"
+          onClick={() => setVisible(!visible)}
+          ref={iconRef}
+        >
           <BellOutlined className="text-2xl text-gray-600 transition duration-300 hover:text-gray-800" />
         </Badge>
 
@@ -199,12 +292,15 @@ const NotificationPopup = () => {
                 )
               }
             >
-              <div className="overflow-y-auto cursor-pointer max-h-96 custom-scrollbar">
+              <div
+                ref={notificationContainerRef}
+                className="overflow-y-auto cursor-pointer max-h-96 custom-scrollbar"
+              >
                 {loading || updateLoading ? (
                   <div className="flex justify-center py-4">
                     <Spin size="small" />
                   </div>
-                ) : notifications?.data?.result.length === 0 ? (
+                ) : sortedNotifications.length === 0 ? (
                   <div className="text-center text-gray-500">
                     <div className="flex justify-center">
                       <img
@@ -234,7 +330,7 @@ const NotificationPopup = () => {
                     </Button>
                   </div>
                 ) : (
-                  notifications?.data?.result.map((notif, index) => (
+                  sortedNotifications.map((notif, index) => (
                     <div
                       key={notif._id || index}
                       className={`flex items-start p-3 transition duration-300 border-b border-gray-100 hover:bg-gray-50 ${

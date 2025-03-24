@@ -135,6 +135,8 @@ const NotificationPopup = () => {
     }
   };
 
+  console.log(notifications?.data?.result)
+
 
   return (
     <div className="flex items-center justify-between pt-10">
