@@ -61,9 +61,9 @@ const Help = () => {
     message.error('Failed:', errorInfo);
   };
 
-  const onChange = (key) => {
-    message.success(key);
-  };
+  // const onChange = (key) => {
+  //   message.success(key);
+  // };
 
   return (
     <div className='w-full'>
@@ -174,7 +174,7 @@ const Help = () => {
           <div>
             <h2 className='py-3 text-2xl font-bold'>Common Questions</h2>
             <div>
-              <Collapse items={items} defaultActiveKey={['1']} onChange={onChange} ghost style={{ fontWeight: "600" }} />
+              <Collapse items={items} defaultActiveKey={['1']} ghost style={{ fontWeight: "600" }} />
             </div>
           </div>
         </div>

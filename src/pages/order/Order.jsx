@@ -76,19 +76,17 @@ const Order = () => {
   // Socket.io connection and event listeners
   useEffect(() => {
     // Listen for new orders
-    socket.on(`notification::${localStorage.getItem("businessLoginId")}`, (data) => {
-      if (!shopId || data.shopId === shopId) {
+    socket.on(`notification::${localStorage.getItem("businessLoginId")}`, () => {
         refetchOrders();
         refetchAnalysis();
-      }
+      
     });
 
     // Listen for order status updates
-    socket.on(`notification::${localStorage.getItem("businessLoginId")}`, (data) => {
-      if (!shopId || data.shopId === shopId) {
+    socket.on(`notification::${localStorage.getItem("businessLoginId")}`, () => {
         refetchOrders();
         refetchAnalysis();
-      }
+      
     });
 
     // Cleanup socket listeners on component unmount

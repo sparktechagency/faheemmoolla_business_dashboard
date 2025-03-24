@@ -44,18 +44,7 @@ const OrderChart = () => {
     <section className="w-full rounded-[10px] border border-primary bg-white p-0 md:p-2">
       <Card
         className="w-full"
-        title={<span className="text-lg md:text-xl lg:text-[24px] font-bold">Order Chart</span>}
-        // extra={
-        //   <Select
-        //     defaultValue={selectedWeek}
-        //     style={{ width: 120 }}
-        //     onChange={handleWeekChange}
-        //   >
-        //     <Select.Option value="Weekly">Weekly</Select.Option>
-        //     <Select.Option value="Monthly">Monthly</Select.Option>
-        //   </Select>
-        // }
-      >
+        title={<span className="text-lg md:text-xl lg:text-[24px] font-bold">Order Chart</span>}>
         <p className="mb-4 text-sm text-gray-500 md:text-base">
           Order trends for the selected time period.
         </p>
