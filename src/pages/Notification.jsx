@@ -107,8 +107,11 @@ const NotificationPopup = () => {
   };
 
   const formatTime = (timestamp) => {
-    const date = new Date(timestamp);
-    return moment(date).fromNow();
+   if (!timestamp) return "Just now";
+       
+       const bangladeshTime = moment(timestamp).add(6, 'hours');
+       
+       return bangladeshTime.fromNow();
   };
 
   const getTypeColor = (type) => {
