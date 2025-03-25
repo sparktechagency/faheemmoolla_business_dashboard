@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Avatar, Badge, Button, Card, Input, Spin, Tag } from "antd";
 import { BellOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import { motion } from "framer-motion";
@@ -6,6 +6,7 @@ import { CiSearch } from "react-icons/ci";
 import { useLocation, useNavigate } from "react-router-dom";
 import massageNotify from "../assets/notification.png";
 import { useProfileQuery } from "../features/profile/profileApi";
+
 import Avator from "../assets/avator2.png";
 import {
   useGetNotificationQuery,
@@ -13,6 +14,7 @@ import {
 } from "../features/notification/notification";
 import io from "socket.io-client";
 import moment from "moment";
+import 'moment-timezone';
 import { baseURL } from "../utils/BaseURL";
 
 const NotificationPopup = () => {
@@ -53,7 +55,7 @@ const NotificationPopup = () => {
     socketRef.current = io(baseURL);
 
     socketRef.current.on("connect", () => {
-      console.log("Socket connected");
+      // console.log("Socket connected");
     });
 
     const handleNewNotification = (notification) => {
@@ -154,39 +156,17 @@ const NotificationPopup = () => {
     navigate("/settings/notification"); // Navigate to notification settings
   };
 
-  const formatTime = (timestamp) => {
-    const date = new Date(timestamp);
-    const now = new Date();
+  // Updated formatTime function with explicit timezone offset
+  const formatTime = useCallback((timestamp) => {
+    if (!timestamp) return "Just now";
     
-    // Convert to Bangladesh local timezone
-    const bdTime = new Date(date.toLocaleString("en-US", { timeZone: "Asia/Dhaka" }));
-    const nowBd = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Dhaka" }));
-  
-    const diffSeconds = Math.floor((nowBd - bdTime) / 1000);
-  
-    if (diffSeconds < 60) {
-      return "just now";
-    } else if (diffSeconds < 3600) {
-      return `${Math.floor(diffSeconds / 60)} min ago`;
-    } else if (diffSeconds < 86400) {
-      return `${Math.floor(diffSeconds / 3600)} hr ago`;
-    } else if (diffSeconds < 604800) {
-      return `${Math.floor(diffSeconds / 86400)} days ago`;
-    } else {
-      return bdTime.toLocaleDateString("en-US", {  
-        month: "short",
-        day: "numeric",
-        year: "numeric"
-      }); // Example: Mar 24, 2025
-    }
-  };
-  
-  
-
-// const currentTimestamp = new Date('2025-03-24T08:16:25.437Z');  // Replace this with your actual timestamp
-// console.log(formatTime(currentTimestamp));  // Output: Correct time format
+    const bangladeshTime = moment(timestamp).add(6, 'hours');
+    
+    return bangladeshTime.fromNow();
+  }, []);
 
 
+  
 
   const getTypeColor = (type) => {
     switch (type) {
@@ -223,7 +203,8 @@ const NotificationPopup = () => {
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
       )
     : [];
-  formatTime("2025-03-24T08:16:25.437Z");
+
+
   return (
     <div className="flex items-center justify-between">
       {path.pathname === "/order" || path.pathname === "/earning" ? (
@@ -330,8 +311,9 @@ const NotificationPopup = () => {
                     </Button>
                   </div>
                 ) : (
-                  sortedNotifications.map((notif, index) => (
-                    <div
+                  sortedNotifications.map((notif, index) => {
+                    const time = formatTime(notif.createdAt)
+                    return (<div
                       key={notif._id || index}
                       className={`flex items-start p-3 transition duration-300 border-b border-gray-100 hover:bg-gray-50 ${
                         !notif.read ? "bg-blue-50" : ""
@@ -346,7 +328,7 @@ const NotificationPopup = () => {
                             </Tag>
                           )}
                           <span className="ml-auto text-xs text-gray-500">
-                            {formatTime(notif.createdAt)}
+                            {time}
                           </span>
                         </div>
                         <p
@@ -362,8 +344,8 @@ const NotificationPopup = () => {
                           </div>
                         )}
                       </div>
-                    </div>
-                  ))
+                    </div>)
+                  })
                 )}
               </div>
             </Card>
