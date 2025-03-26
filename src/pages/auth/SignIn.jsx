@@ -23,7 +23,11 @@ export default function LoginPage() {
           localStorage.setItem("businessLoginId", response?.data?.user?._id);
           route("/")
         } catch (error) {
-          message.error(error?.data?.message);
+          if(error?.data){
+            message.error(error?.data?.message);
+          }else{
+            message.error("Server error Please try Another time")
+          }
         }
   };
   
