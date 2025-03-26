@@ -27,4 +27,4 @@ jobs:
       - run: npm run build --if-present
       - name: Change Directory
         run: cd /home/masters/fahemmolla_business/_work/faheemmoolla_business_dashboard/faheemmoolla_business_dashboard
-      - run: pm2 restart 35
+      - run: pm2 restart 36
