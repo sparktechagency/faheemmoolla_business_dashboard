@@ -238,7 +238,7 @@ const NotificationPopup = () => {
             src={
               profile?.data?.image
                 ? `${baseURL}${profile?.data?.image}`
-                : `${Avator}`
+                : `/avator2.png`
             }
             size={30}
           />

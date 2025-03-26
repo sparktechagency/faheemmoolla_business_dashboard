@@ -1,4 +1,4 @@
-import { Button, Input, Form } from "antd";
+import { Button, Input, Form, message } from "antd";
 import { login,googleIcon,companyLogo } from "../../assets/assets";
 import { useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../../features/auth/authApi";
@@ -23,8 +23,7 @@ export default function LoginPage() {
           localStorage.setItem("businessLoginId", response?.data?.user?._id);
           route("/")
         } catch (error) {
-          console.error("Feild login, Please try again!!:", error);
-          alert("Feild login, Please try again!!");
+          message.error(error?.data?.message);
         }
   };
   
