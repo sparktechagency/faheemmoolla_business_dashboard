@@ -1,1 +1,1 @@
-export const baseURL = "https://rakibur5000.binarybards.online"
+export const baseURL = "http://139.59.0.25:5000"
