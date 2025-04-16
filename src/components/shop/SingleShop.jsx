@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { PiMapPinAreaFill } from "react-icons/pi";
 import { Link } from "react-router-dom";
-import { Modal, Button, message, Spin } from "antd";
+import { Modal, message } from "antd";
 import {
   useDeleteShopMutation,
   useUpdateShopStatusMutation,
@@ -10,7 +10,6 @@ import { baseURL } from "../../utils/BaseURL";
 import Loading from "../Loading";
 
 const SingleShop = ({ shop }) => {
-
   const [isModalVisible, setIsModalVisible] = useState({
     off: false,
     delete: false,
@@ -49,46 +48,53 @@ const SingleShop = ({ shop }) => {
   };
 
   return (
-    <div className="relative w-full max-w-[360px] bg-white rounded-xl overflow-hidden">
+    <div className="relative w-full border border-gray-200 shadow max-w-[360px] h-[600px] bg-white rounded-xl overflow-hidden flex flex-col">
       {isLoading && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <Loading />
         </div>
       )}
 
-      <img
-        src={`${baseURL}/${shop?.banner}`}
-        alt="Shop"
-        className="w-full h-[250px]"
-        loading="lazy"
-      />
-      <div className="px-5">
-        <div className="flex gap-3">
-          <img
-            src={`${baseURL}/${shop?.logo}`}
-            alt="Shop Logo"
-            className="w-[70px] h-[70px] rounded-full p-2"
-            loading="lazy"
-          />
-          <div className="py-2 text-[12px] font-semibold text-gray-700 space-y-2">
-            <h3 className="text-xl text-gray-800">{shop?.shopName}</h3>
+      <div className="h-[250px] overflow-hidden">
+        <img
+          src={`${baseURL}/${shop?.banner}`}
+          alt="Shop"
+          className="w-full h-full object-cover"
+          loading="lazy"
+        />
+      </div>
+      
+      <div className="px-5 flex-grow flex flex-col">
+        <div className="flex gap-3 py-2">
+          <div className="w-[70px] h-[70px] flex-shrink-0">
+            <img
+              src={`${baseURL}/${shop?.logo}`}
+              alt="Shop Logo"
+              className="w-full h-full rounded-full p-2 object-cover"
+              loading="lazy"
+            />
+          </div>
+          <div className="py-2 text-[12px] font-semibold text-gray-700 space-y-1">
+            <h3 className="text-xl text-gray-800 truncate">{shop?.shopName}</h3>
             <p className="flex items-center gap-2">
               <PiMapPinAreaFill className="text-xl" />
-              <span>{shop?.shopAddress}</span>
+              <span className="truncate">{shop?.shopAddress}</span>
             </p>
             <p>Open Time: {shop?.shopOpenTime}:00 AM</p>
             <p>Close Time: {shop?.shopCloseTime}:00 PM</p>
           </div>
         </div>
 
-        <textarea
-          readOnly
-          placeholder="Description"
-          defaultValue={shop?.shopDescription}
-          className="border border-primary w-full p-2 h-[150px] rounded-xl focus:outline-none"
-        />
+        <div className="flex-grow overflow-hidden mb-4">
+          <textarea
+            readOnly
+            placeholder="Description"
+            defaultValue={shop?.shopDescription}
+            className="border border-primary w-full p-2 h-[120px] rounded-xl focus:outline-none resize-none"
+          />
+        </div>
 
-        <div className="flex px-3 py-3 text-sm justify-evenly">
+        <div className="flex px-3 py-3 mt-auto text-sm justify-evenly">
           <button
             onClick={() => handleModalToggle("off", true)}
             className={`px-4 py-1 font-semibold text-gray-700 border ${
@@ -138,7 +144,6 @@ const SingleShop = ({ shop }) => {
             <button
               className="px-10 py-3.5 text-white bg-red-500 border rounded"
               type="primary"
-              loading={shopStatusLoading || isLoading}
               onClick={() => handleAction("off", shop._id)}
             >
               {shopStatus ? "Turn On" : "Turn Off"}
@@ -172,7 +177,6 @@ const SingleShop = ({ shop }) => {
             <button
               className="px-10 py-3.5 text-white bg-red-500 border rounded"
               type="primary"
-              loading={shopDeleteLoading || isLoading}
               onClick={() => handleAction("delete", shop._id)}
             >
               Delete

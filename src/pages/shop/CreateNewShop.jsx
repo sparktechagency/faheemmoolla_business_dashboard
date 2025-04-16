@@ -118,7 +118,7 @@ const CreateSingleShop = () => {
       if (response.success === true) {
         navigate("/shop-management");
         window.location.reload();
-      }
+    }
     } catch (error) {
       error?.data?.errorMessages?.map((text) => message.error(text.message));
       console.log(error);

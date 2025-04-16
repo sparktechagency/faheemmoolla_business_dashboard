@@ -1,1 +1,1 @@
-export const baseURL = "http://139.59.0.25:5000"
+export const baseURL = "https://api.foodsavr.com"

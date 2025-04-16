@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Button, message, Spin } from "antd";
+import { message, Spin } from "antd";
 import {
   useDeleteMealMutation,
   useUpdateMealStatusMutation,
@@ -11,7 +11,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
 const SingleMeal = ({ items }) => {
-  
   const [mealStatus, setMealStatus] = useState(items.mealStatus);
   const [isLoading, setIsLoading] = useState(false);
   const [deleteMeal, { isLoading: mealDeleteLoading }] =
@@ -83,37 +82,41 @@ const SingleMeal = ({ items }) => {
     }),
   };
 
-
   return (
-    <div className="relative w-full max-w-[360px] bg-white rounded-xl overflow-hidden">
+    <div className="relative w-full border border-gray-200 shadow max-w-[360px] h-[600px] bg-white rounded-xl overflow-hidden flex flex-col">
       {isLoading && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <Spin />
         </div>
       )}
 
-      <div className="cursor-pointer">
+      <div className="h-[250px] overflow-hidden cursor-pointer" onClick={() => handleModalToggle(true)}>
         <img
           src={`${baseURL}/${items?.image}`}
-          className="w-full h-[250px] object-cover"
+          className="w-full h-full object-cover"
           alt="Meal"
         />
       </div>
 
-      <div className="px-5">
+      <div className="px-5 flex-grow flex flex-col">
         <div className="py-4 text-[12px] font-semibold text-gray-700 space-y-1">
-          <h3 className="text-xl text-gray-800">{items?.name}</h3>
-          <p>Category: {items?.category}</p>
+          <h3 className="text-xl text-gray-800 truncate">{items?.name}</h3>
+          <p>Category: <span className="truncate">{items?.category}</span></p>
           <p>Price: ${items?.price}</p>
           <p>Collection Time: {items?.collectionTime}</p>
-          <p>Dietary Preference: {items?.dietaryPreference}</p>
+          <p>Dietary Preference: <span className="truncate">{items?.dietaryPreference}</span></p>
         </div>
-        <textarea
-          placeholder="Description"
-          className="border border-primary w-full p-2 h-[150px] rounded-xl focus:outline-none"
-          defaultValue={items?.description}
-        />
-        <div className="flex px-3 py-3 text-sm justify-evenly">
+        
+        <div className="flex-grow overflow-hidden mb-4">
+          <textarea
+            readOnly
+            placeholder="Description"
+            className="border border-primary w-full p-2 h-[120px] rounded-xl focus:outline-none resize-none"
+            defaultValue={items?.description}
+          />
+        </div>
+        
+        <div className="flex px-3 py-3 mt-auto text-sm justify-evenly">
           <button
             onClick={() => handleAction("off", items?._id)}
             className={`px-4 py-1 font-semibold text-gray-700 border ${
@@ -181,7 +184,7 @@ const SingleMeal = ({ items }) => {
                 {/* Animated Image */}
                 <motion.img
                   key={currentImageIndex}
-                  src={`${baseURL}/${items.image[currentImageIndex]}`}
+                  src={`${baseURL}/${Array.isArray(items.image) ? items.image[currentImageIndex] : items.image}`}
                   alt="Meal"
                   className="object-cover rounded-lg shadow-lg w-96 h-60"
                   variants={imageVariants}
