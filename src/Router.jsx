@@ -23,7 +23,7 @@ import SetPassword from "./pages/auth/SetPassword";
 import Verify from "./pages/auth/Verify_user";
 import SuccessReset from "./pages/auth/SucessReset";
 import Notification from "./pages/Notification";
-import PrivacyPolicy from "./pages/privacyPolicy";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsConditions from "./pages/TermsConditions";
 import UserProfile from "./pages/UserProfile";
 import ProtectedRoute from "./components/ProtectedRoute";
