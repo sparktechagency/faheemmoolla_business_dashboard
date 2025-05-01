@@ -12,7 +12,7 @@ import {
 } from "../features/notification/notification";
 import io from "socket.io-client";
 import moment from "moment";
-import { baseURL } from "../utils/BaseURL";
+import { baseURL, SocketBaseURL } from "../utils/BaseURL";
 
 const NotificationPopup = () => {
   const path = useLocation();
@@ -33,7 +33,7 @@ const NotificationPopup = () => {
 
 
   useEffect(() => {
-    socketRef.current = io(baseURL);
+    socketRef.current = io(SocketBaseURL);
 
     socketRef.current.on("connect", () => {
       console.log("Socket connected:", socketRef.current.id);
@@ -108,9 +108,9 @@ const NotificationPopup = () => {
 
   const formatTime = (timestamp) => {
    if (!timestamp) return "Just now";
-       
+
        const bangladeshTime = moment(timestamp).add(6, 'hours');
-       
+
        return bangladeshTime.fromNow();
   };
 
@@ -143,9 +143,9 @@ const NotificationPopup = () => {
 
   return (
     <div className="flex items-center justify-between pt-10">
-     
 
-     
+
+
           <motion.div
             ref={popupRef}
             initial={{ opacity: 0, y: -10 }}
@@ -155,7 +155,7 @@ const NotificationPopup = () => {
             className="w-full p-10 bg-white border border-gray-200 rounded-xl"
           >
             <div
-            
+
             >
               <div className="w-full cursor-pointer">
                 {loading || updateLoading ? (
@@ -218,7 +218,7 @@ const NotificationPopup = () => {
               </div>
             </div>
           </motion.div>
-    
+
     </div>
   );
 };

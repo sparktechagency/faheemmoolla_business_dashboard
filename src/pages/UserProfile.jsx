@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
-import { Input, Button, Upload, message } from "antd";
 import { EditOutlined, SaveOutlined } from "@ant-design/icons";
+import { Button, Input, Upload, message } from "antd";
+import { useEffect, useState } from "react";
 import { MdEdit } from "react-icons/md";
-import { useProfileQuery, useUpdateProfileMutation } from "../features/profile/profileApi";
 import CustomLoading from "../components/CustomLoading";
+import { useProfileQuery, useUpdateProfileMutation } from "../features/profile/profileApi";
 import { baseURL } from "../utils/BaseURL";
 
 const Profile = () => {
@@ -16,6 +16,7 @@ const Profile = () => {
     name: "",
     email: "",
     phone: "",
+    yocoMerchantAcc: ""
   });
 
   useEffect(() => {
@@ -24,12 +25,13 @@ const Profile = () => {
         name: user.data.name || "",
         email: user.data.email || "",
         phone: user.data.phone || "",
+        yocoMerchantAcc: user.data.yocoMerchantAcc || ""
       });
 
       // Set profile image correctly
       setPreviewImage(
         user.data.image ? `${baseURL}/${user.data.image}` :
-        "https://i.ibb.co.com/fYrFP06M/images-1.png"
+          "https://i.ibb.co.com/fYrFP06M/images-1.png"
       );
     }
   }, [user]);
@@ -69,7 +71,12 @@ const Profile = () => {
       return;
     }
 
-    const data = { phone: profile.phone, name: profile.name };
+    const data = {
+      phone: profile.phone,
+      name: profile.name,
+      yocoMerchantAcc: profile.yocoMerchantAcc
+    };
+
     const formData = new FormData();
     formData.append("data", JSON.stringify(data));
     if (profileImageFile) {
@@ -78,15 +85,15 @@ const Profile = () => {
 
     try {
       const result = await updateProfile(formData).unwrap();
-      
+
       // Refetch the user profile data to get the updated information
       await refetch();
-      
+
       // If the API returns the updated user data directly, you can also update the state
       if (result?.data?.image) {
         setPreviewImage(`${baseURL}/${result.data.image}`);
       }
-      
+
       message.success("Profile updated successfully");
       setIsEditing(false);
       setIsPhoneReadOnly(true);
@@ -166,6 +173,20 @@ const Profile = () => {
             className="border rounded-lg border-primary p-2 h-[44px]"
             placeholder="Enter your phone number"
           />
+
+          {user?.data?.yocoMerchantAcc && (
+            <>
+              <label className="block text-gray-600">Yoco Merchant Account</label>
+              <Input
+                name="yocoMerchantAcc"
+                value={profile.yocoMerchantAcc}
+                onChange={handleChange}
+                disabled={!isEditing}
+                className="border rounded-lg border-primary p-2 h-[44px]"
+                placeholder="Enter your Yoco merchant account number"
+              />
+            </>
+          )}
         </div>
 
         <div className="flex justify-end">

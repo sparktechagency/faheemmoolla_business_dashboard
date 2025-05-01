@@ -1,5 +1,5 @@
 import { CalendarOutlined, DownOutlined } from "@ant-design/icons";
-import { Button, ConfigProvider, DatePicker, Select, Pagination } from "antd";
+import { Button, ConfigProvider, DatePicker, Pagination, Select } from "antd";
 import dayjs from "dayjs";
 import { debounce } from "lodash";
 import React, {
@@ -47,6 +47,7 @@ const Earning = () => {
   const queryParams = new URLSearchParams(location.search);
   const searchValue = queryParams.get("search");
 
+
   const [date, setDate] = useState({
     year: dayjs().year(),
     month: dayjs().month() + 1,
@@ -63,7 +64,7 @@ const Earning = () => {
   );
 
   const handleSearch = useCallback(
-    debounce((searchText) => {}, 300),
+    debounce((searchText) => { }, 300),
     []
   );
 
@@ -128,7 +129,7 @@ const Earning = () => {
       <div className="flex justify-end gap-5 py-6 mt-4">
         <ConfigProvider theme={theme}>
           <Select
-            value={queryLoading ? "Loading..." : shopId }
+            value={queryLoading ? "Loading..." : shopId}
             size="large"
             style={{ minWidth: 150 }}
             onChange={handleChange}
@@ -164,22 +165,22 @@ const Earning = () => {
 
       {
         isLoading ? <CustomLoading /> : <Table
-        columns={columns}
-        data={filteredOrders}
-        location={location.pathname}
-        renderRow={(item, i) => ""}
-      />
+          columns={columns}
+          data={filteredOrders}
+          location={location.pathname}
+          renderRow={(item, i) => ""}
+        />
       }
 
       <div className="flex justify-end">
-      <Pagination
-        current={page}
-        pageSize={limit}
-        total={data?.data?.pagination?.total || 0}
-        onChange={onPageChange}
-        showSizeChanger={false} // Optional: Show option to change items per page
-        style={{ marginTop: 20, textAlign: "center" }}
-      />
+        <Pagination
+          current={page}
+          pageSize={limit}
+          total={data?.data?.pagination?.total || 0}
+          onChange={onPageChange}
+          showSizeChanger={false} // Optional: Show option to change items per page
+          style={{ marginTop: 20, textAlign: "center" }}
+        />
       </div>
     </section>
   );

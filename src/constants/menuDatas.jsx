@@ -12,6 +12,7 @@ import {
   notification,
   privacy,
   profile,
+  payout,
 } from "../assets/assets";
 
 export const menuDatas = [
@@ -44,6 +45,11 @@ export const menuDatas = [
     icon: earning,
     title: "Earning",
     link: "/earning",
+  },
+  {
+    icon: payout,
+    title: "Payouts",
+    link: "/payouts",
   },
   {
     icon: help,

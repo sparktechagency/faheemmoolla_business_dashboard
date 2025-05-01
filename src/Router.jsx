@@ -3,7 +3,6 @@ import Layout from "./layouts/Layout";
 import Dashboard from "./pages/dashboard/Dashboard";
 import NotFound from "./pages/NotFound";
 import Order from "./pages/order/Order";
-import BankCard from "./pages/bankcard/BankCard";
 import Help from "./pages/help/Help";
 import ShopManagement from "./pages/shop/ShopManagement";
 import CreateNewShop from "./pages/shop/CreateNewShop";
@@ -28,6 +27,8 @@ import PrivacyPolicy from "./pages/privacyPolicy";
 import TermsConditions from "./pages/TermsConditions";
 import UserProfile from "./pages/UserProfile";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Wallet from "./components/wallet/Wallet";
+import Payouts from "./pages/payouts/Payouts";
 
 const Routers = () => {
   return (
@@ -56,6 +57,8 @@ const Routers = () => {
         >
           <Route index element={<Dashboard />} />
           <Route path="order" element={<Order />} />
+          <Route path="wallet" element={<Wallet />} />
+
           <Route path="shop-management">
             <Route index element={<ShopManagement />} />
             <Route path="create-new-shop" element={<CreateNewShop />} />
@@ -73,6 +76,7 @@ const Routers = () => {
           </Route>
           <Route path="help" element={<Help />} />
           <Route path="earning" element={<Earning />} />
+          <Route path="payouts" element={<Payouts />} />
           <Route path="settings">
             <Route index element={<Settings />} />
             <Route path="profile" element={<UserProfile />} />

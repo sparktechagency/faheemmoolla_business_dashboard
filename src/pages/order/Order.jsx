@@ -1,8 +1,9 @@
-import { ConfigProvider, Select, Spin, Pagination } from "antd";
+import { ConfigProvider, Pagination, Select, Spin } from "antd";
 import { debounce } from "lodash";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { MdTune } from "react-icons/md";
 import { useLocation } from "react-router-dom";
+import io from "socket.io-client";
 import OrderData from "../../assets/icons/orderData.png";
 import shop_order from "../../assets/icons/shop_order.png";
 import AnalysisCard from "../../components/AnalysisCard";
@@ -10,8 +11,7 @@ import Table from "../../components/Table";
 import TableRow from "../../components/TableRow";
 import { useGetOrderAnalysisQuery, useGetOrderQuery } from "../../features/order/orderApi";
 import { useAllShopQuery } from "../../features/shop/shopApi";
-import io from "socket.io-client";
-import { baseURL } from "../../utils/BaseURL";
+import { SocketBaseURL } from "../../utils/BaseURL";
 
 const { Option } = Select;
 
@@ -29,7 +29,7 @@ const columns = [
 
 // Initialize socket connection
 // Replace 'http://your-backend-url' with your actual backend URL
-const socket = io(baseURL);
+const socket = io(SocketBaseURL);
 
 const Order = () => {
   const location = useLocation();
@@ -44,30 +44,30 @@ const Order = () => {
   const [forceRefetch, setForceRefetch] = useState(0); // For manual refetching
 
   // Fetch shop data
-  const { data: allShop, isLoading: shopLoading } = useAllShopQuery(undefined, { 
-    refetchOnFocus: true, 
-    refetchOnReconnect: true 
+  const { data: allShop, isLoading: shopLoading } = useAllShopQuery(undefined, {
+    refetchOnFocus: true,
+    refetchOnReconnect: true
   });
 
   // Fetch order analysis with socket-triggered refetching
   const { data: analysisData, isLoading: analysisLoading, refetch: refetchAnalysis } = useGetOrderAnalysisQuery(
-    shopId, 
-    { 
-      refetchOnFocus: true, 
+    shopId,
+    {
+      refetchOnFocus: true,
       refetchOnReconnect: true,
       skip: !shopId
     }
   );
 
   // Fetch orders with pagination and socket-triggered refetching
-  const { 
-    data: getOrder, 
-    isLoading: orderLoading, 
-    refetch: refetchOrders 
+  const {
+    data: getOrder,
+    isLoading: orderLoading,
+    refetch: refetchOrders
   } = useGetOrderQuery(
     { shopId, page, limit, forceRefetch }, // Added forceRefetch to dependencies
-    { 
-      refetchOnFocus: true, 
+    {
+      refetchOnFocus: true,
       refetchOnReconnect: true,
       skip: !shopId
     }
@@ -77,16 +77,16 @@ const Order = () => {
   useEffect(() => {
     // Listen for new orders
     socket.on(`notification::${localStorage.getItem("businessLoginId")}`, () => {
-        refetchOrders();
-        refetchAnalysis();
-      
+      refetchOrders();
+      refetchAnalysis();
+
     });
 
     // Listen for order status updates
     socket.on(`notification::${localStorage.getItem("businessLoginId")}`, () => {
-        refetchOrders();
-        refetchAnalysis();
-      
+      refetchOrders();
+      refetchAnalysis();
+
     });
 
     // Cleanup socket listeners on component unmount
@@ -109,7 +109,7 @@ const Order = () => {
         // Clear shopId since no shops exist
         setShopId("");
         localStorage.removeItem("shopId");
-      } 
+      }
       // Case 2: Shops exist but current selection is invalid
       else if (shopId) {
         const shopExists = allShop.data.shops.some(shop => shop._id === shopId);
