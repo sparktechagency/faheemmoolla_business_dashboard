@@ -93,9 +93,7 @@ const Wallet = () => {
           <div style={{ textAlign: 'center' }}>
             <Button
               key="back"
-              onClick={handleCancel}
-              style={{ marginRight: 8 }}
-            >
+              onClick={handleCancel} style={{ marginRight: 8 }} >
               No
             </Button>,
             <Button

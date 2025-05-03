@@ -46,7 +46,7 @@ const Dashboard = () => {
       orderData: OrderData,
     },
     {
-      value:  queryLoading?<div className="text-center"><Spin /></div>:`$${allShop?.data?.totalRevenue?.toFixed(2)}`,
+      value:  queryLoading?<div className="text-center"><Spin /></div>:`R${allShop?.data?.totalRevenue?.toFixed(2)}`,
       title: "Total Revenue",
       icon: revenue,
       percentage: "12% (30 days)",

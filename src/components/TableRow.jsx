@@ -1,6 +1,5 @@
 import { Button, Card, Dropdown, Modal, Radio, Spin, message } from "antd";
 import { useState } from "react";
-import shop from "../assets/shop/Shop.png";
 import { useGetEarningsDetailQuery } from "../features/earning/earningApi";
 import { useGetOfferDetalsQuery } from "../features/offer/offerApi";
 import {
@@ -9,7 +8,6 @@ import {
 } from "../features/order/orderApi";
 import { baseURL } from "../utils/BaseURL";
 import CustomLoading from "./CustomLoading";
-import Loading from "./Loading";
 
 const OrderRow = ({ item, list, location }) => {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
@@ -125,8 +123,8 @@ const OrderRow = ({ item, list, location }) => {
     .getDate()
     .toString()
     .padStart(2, "0")}-${(detailsearning.getMonth() + 1)
-    .toString()
-    .padStart(2, "0")}-${detailsearning.getFullYear()}`;
+      .toString()
+      .padStart(2, "0")}-${detailsearning.getFullYear()}`;
 
   const renderModalContent = () => (
     <>
@@ -208,28 +206,28 @@ const OrderRow = ({ item, list, location }) => {
           <CustomLoading />
         ) : (
           <>
-           
-<div className="pt-6 space-y-4">
-        {earningDetails?.data?.products.map((order, index) => (
-          <div key={index} className="flex p-3 border rounded-lg border-amber-200">
-            <div className="w-24 h-16 mr-4">
-              <img src={`${baseURL}${order?.productId?.image}`} alt={order.item} className="object-cover w-full h-full rounded-lg" />
-            </div>
-            <div className="flex-1">
-              <div className="text-sm">
-                
-                <p><span className="font-medium">Product Name:</span> {order.productName}</p>
-                
-                
-                <p><span className="font-medium">Item & Qty:</span> {order.item}*{order.quantity}</p>
-                <p><span className="font-medium">Price:</span> ${order.price}</p>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
 
-            
+            <div className="pt-6 space-y-4">
+              {earningDetails?.data?.products.map((order, index) => (
+                <div key={index} className="flex p-3 border rounded-lg border-amber-200">
+                  <div className="w-24 h-16 mr-4">
+                    <img src={`${baseURL}${order?.productId?.image}`} alt={order.item} className="object-cover w-full h-full rounded-lg" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-sm">
+
+                      <p><span className="font-medium">Product Name:</span> {order.productName}</p>
+
+
+                      <p><span className="font-medium">Item & Qty:</span> {order.item}*{order.quantity}</p>
+                      <p><span className="font-medium">Price:</span> ${order.price}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+
           </>
         ))}
 
@@ -241,25 +239,25 @@ const OrderRow = ({ item, list, location }) => {
         ) : (
           <>
 
-   <div className="space-y-4 pt-7">
-        {order?.data?.products.map((order, index) => (
-          <div key={index} className="flex p-3 border rounded-lg border-amber-200">
-            <div className="w-24 h-16 mr-4">
-              <img src={`${baseURL}${order?.productId?.image}`} alt={order.item} className="object-cover w-full h-full rounded-lg" />
+            <div className="space-y-4 pt-7">
+              {order?.data?.products.map((order, index) => (
+                <div key={index} className="flex p-3 border rounded-lg border-amber-200">
+                  <div className="w-24 h-16 mr-4">
+                    <img src={`${baseURL}${order?.productId?.image}`} alt={order.item} className="object-cover w-full h-full rounded-lg" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-sm">
+
+                      <p><span className="font-medium">Product Name:</span> {order.productName}</p>
+
+
+                      <p><span className="font-medium">Item & Qty:</span> {order.item}*{order.quantity}</p>
+                      <p><span className="font-medium">Price:</span> ${order.price}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
-            <div className="flex-1">
-              <div className="text-sm">
-                
-                <p><span className="font-medium">Product Name:</span> {order.productName}</p>
-                
-                
-                <p><span className="font-medium">Item & Qty:</span> {order.item}*{order.quantity}</p>
-                <p><span className="font-medium">Price:</span> ${order.price}</p>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
 
 
           </>
@@ -283,42 +281,35 @@ const OrderRow = ({ item, list, location }) => {
 
   return (
     <div
-      className={`grid ${
-        location === "/order" ? "grid-cols-11" : "grid-cols-10"
-      } ${location === "/offer" ? "grid-cols-11" : "grid-cols-10"} ${
-        location === "/earning" ? "grid-cols-10" : "grid-cols-11"
-      } m-3 text-sm bg-gray-100 rounded-lg whitespace-nowrap`}
+      className={`grid ${location === "/order" ? "grid-cols-11" : "grid-cols-10"
+        } ${location === "/offer" ? "grid-cols-11" : "grid-cols-10"} ${location === "/earning" ? "grid-cols-10" : "grid-cols-11"
+        } m-3 text-sm bg-gray-100 rounded-lg whitespace-nowrap`}
     >
       <div
-        className={` py-3 overflow-hidden ${
-          location === "/offer" && "text-start px-3"
-        } ${location === "/earning" && "text-start "} overflow-ellipsis`}
+        className={` py-3 overflow-hidden ${location === "/offer" && "text-start px-3"
+          } ${location === "/earning" && "text-start "} overflow-ellipsis`}
       >
         {location === "/offer" && list + 1}{" "}
         {location === "/earning" && formattedDate}{" "}
         {location === "/order" && formattedDate}
       </div>
       <div
-        className={` py-3 overflow-hidden ${
-          location === "/offer" && "text-start px-3"
-        }   ${location === "/earning" && "text-start px-3"} overflow-ellipsis`}
+        className={` py-3 overflow-hidden ${location === "/offer" && "text-start px-3"
+          }   ${location === "/earning" && "text-start px-3"} overflow-ellipsis`}
       >
         {location === "/earning" && shopName}
         {orderNumber} {location === "/offer" && shopId?.shopName}
       </div>
       <div
-        className={`px-3 py-3 overflow-hidden ${
-          location === "/offer" && "text-start"
-        } ${location === "/earning" && "text-start px-3"} overflow-ellipsis`}
+        className={`px-3 py-3 overflow-hidden ${location === "/offer" && "text-start"
+          } ${location === "/earning" && "text-start px-3"} overflow-ellipsis`}
       >
         {itemName} {userId?.name}{" "}
       </div>
       <div
-        className={` py-3 overflow-hidden ${
-          location === "/offer" && "text-start px-1.5"
-        } ${location === "/earning" && "text-start px-4"} ${
-          location === "/order" && "text-center px-4"
-        } overflow-ellipsis`}
+        className={` py-3 overflow-hidden ${location === "/offer" && "text-start px-1.5"
+          } ${location === "/earning" && "text-start px-4"} ${location === "/order" && "text-center px-4"
+          } overflow-ellipsis`}
       >
         {offerTitle} {shopId?.shopAddress}
       </div>
@@ -334,18 +325,16 @@ const OrderRow = ({ item, list, location }) => {
         {location === "/order" && "pronab"}
       </div> */}
       <div
-        className={` py-3 overflow-hidden ${
-          location === "/offer" && "text-start px-1 ml-3"
-        } ${location === "/earning" && "text-start px-4"}  ${
-          location === "/order" && "text-center  px-4 ml-7"
-        }  `}
+        className={` py-3 overflow-hidden ${location === "/offer" && "text-start px-1 ml-3"
+          } ${location === "/earning" && "text-start px-4"}  ${location === "/order" && "text-center  px-4 ml-7"
+          }  `}
       >
         {item?.itemId?.category}{" "}
         {location === "/earning" &&
-         <span>{products.length}</span>
-}
+          <span>{products.length}</span>
+        }
         {location === "/order" &&
-            <span>{products.length}</span>}
+          <span>{products.length}</span>}
       </div>
 
 
@@ -354,82 +343,71 @@ const OrderRow = ({ item, list, location }) => {
 
       {
         location === "/order" && <div
-        className={`py-3 overflow-hidden  ${
-          location === "/order" && "text-center px-4 ml-20"
-        } ${
-          location === "/earning" && "text-start ml-5 "
-        }` }
-      >
-        {location === "/order"  && (
-          <span>
-            {products.reduce((sum, product) => sum + product.quantity, 0)}
-          </span>
-        )}
-      </div>
+          className={`py-3 overflow-hidden  ${location === "/order" && "text-center px-4 ml-20"
+            } ${location === "/earning" && "text-start ml-5 "
+            }`}
+        >
+          {location === "/order" && (
+            <span>
+              {products.reduce((sum, product) => sum + product.quantity, 0)}
+            </span>
+          )}
+        </div>
       }
 
-      
-{
+
+      {
         location === "/earning" && <div
-        className={`py-3 overflow-hidden  ${
-          location === "/order" && "text-center px-4 ml-20"
-        } ${
-          location === "/earning" && "text-start ml-5 "
-        }` }
-      >
-        {location === "/earning"  && (
-          <span>
-            {products.reduce((sum, product) => sum + product.quantity, 0)}
-          </span>
-        )}
-      </div>
+          className={`py-3 overflow-hidden  ${location === "/order" && "text-center px-4 ml-20"
+            } ${location === "/earning" && "text-start ml-5 "
+            }`}
+        >
+          {location === "/earning" && (
+            <span>
+              {products.reduce((sum, product) => sum + product.quantity, 0)}
+            </span>
+          )}
+        </div>
       }
 
-      
+
       <div
-        className={`px-3 py-3 overflow-hidden ${
-          location === "/offer" && "text-start px-2"
-        } ${location === "/earning" && "text-start px-4"} overflow-ellipsis`}
+        className={`px-3 py-3 overflow-hidden ${location === "/offer" && "text-start px-2"
+          } ${location === "/earning" && "text-start px-4"} overflow-ellipsis`}
       >
-        {endDate} {location === "/earning" && "$"+item?.businessEarning}
+        {endDate} {location === "/earning" && "$" + item?.businessEarning}
       </div>
 
-          {
-            location === "/offer" &&  <div
-            className={`px-3 py-3 overflow-hidden ${
-              location === "/offer" && "text-start px-2 -ml-1"
+      {
+        location === "/offer" && <div
+          className={`px-3 py-3 overflow-hidden ${location === "/offer" && "text-start px-2 -ml-1"
             } overflow-ellipsis`}
-          >
-            {endDate} 
-          </div>
-          }
+        >
+          {endDate}
+        </div>
+      }
 
       <div
-        className={`px-3 py-3 ${
-          location === "/offer" && "text-start px-[8px] ml-2"
-        } ${location === "/earning" && "text-start px-5"} truncate`}
+        className={`px-3 py-3 ${location === "/offer" && "text-start px-[8px] ml-2"
+          } ${location === "/earning" && "text-start px-5"} truncate`}
       >
         {" "}
-        {location === "/offer" && "$"+discountPrice}{" "}
+        {location === "/offer" && "R " + discountPrice}{" "}
         {location === "/earning" && item?.revenue}{location === "/earning" && "%"}
-        {location === "/order" && "$"+item?.totalAmount}
+        {location === "/order" && "R " + item?.totalAmount}
       </div>
       <div
-        className={` py-3 overflow-hidden ${
-          location === "/offer" && "text-center px-2 -ml-5"
-        } ${location === "/earning" && "text-start ml-2"} rounded ${
-          orderStatus === "active" || status === "active"
+        className={` py-3 overflow-hidden ${location === "/offer" && "text-center px-2 -ml-5"
+          } ${location === "/earning" && "text-start ml-2"} rounded ${orderStatus === "active" || status === "active"
             ? "bg-green-500 text-white"
             : ""
-        } overflow-ellipsis ${
-          orderStatus === "completed" || status === "completed"
+          } overflow-ellipsis ${orderStatus === "completed" || status === "completed"
             ? "bg-red-500 text-white"
             : ""
-        } ${
-          orderStatus === "panding" || status === "panding"
+          } ${orderStatus === "panding" || status === "panding"
             ? "bg-orange-400 text-white"
             : ""
-        }`}
+          }`}
       >
         {status} {location === "/offer" && orderStatus}{" "}
         {location === "/earning" && orderStatus}{" "}
@@ -437,29 +415,24 @@ const OrderRow = ({ item, list, location }) => {
         {location === "/order" && "%"}
       </div>
       <div
-        className={`${
-          location === "/earning" ? "" : "col-span-2"
-        } px-5 text-center`}
+        className={`${location === "/earning" ? "" : "col-span-2"
+          } px-5 text-center`}
       >
         <div
-          className={`${
-            location === "/offer" ? "" : "flex items-center justify-center"
-          } gap-1 p-1 ${
-            location === "/earning"
+          className={`${location === "/offer" ? "" : "flex items-center justify-center"
+            } gap-1 p-1 ${location === "/earning"
               ? ""
               : location === "/offer"
-              ? ""
-              : "border w-full border-green-500"
-          } rounded`}
+                ? ""
+                : "border w-full border-green-500"
+            } rounded`}
         >
           <button
-            className={`${
-              location === "/earning"
-                ? "bg-primary p-2 text-white"
-                : `box-border border ${
-                    location === "/order" ? "px-8" : "px-10"
-                  }  py-1.5 border-primary `
-            } rounded`}
+            className={`${location === "/earning"
+              ? "bg-primary p-2 text-white"
+              : `box-border border ${location === "/order" ? "px-8" : "px-10"
+              }  py-1.5 border-primary `
+              } rounded`}
             onClick={() => showViewModal(_id)}
           >
             {location === "/earning" && "view Details"}
@@ -496,13 +469,12 @@ const OrderRow = ({ item, list, location }) => {
                   onVisibleChange={handleDropdownVisibleChange} // Handle visibility change
                 >
                   <button
-                    className={`w-[120px] p-2 text-white rounded ${
-                      item.orderStatus === "delivered"
-                        ? "bg-green-600"
-                        : item.orderStatus === "canceled"
+                    className={`w-[120px] p-2 text-white rounded ${item.orderStatus === "delivered"
+                      ? "bg-green-600"
+                      : item.orderStatus === "canceled"
                         ? "bg-red-600" // You can replace with any color you want for canceled status
                         : "bg-primary"
-                    }`}
+                      }`}
                   >
                     {item?.orderStatus || "Select Status"}
                   </button>

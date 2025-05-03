@@ -130,7 +130,7 @@ const Revenue = () => {
                 />
                 <YAxis
                   tick={{ fill: "#aaa", fontSize: '11px' }}
-                  tickFormatter={(tick) => `$${tick / 1000}k`}
+                  tickFormatter={(tick) => `R${tick / 1000}k`}
                   width={40}
                 />
                 <Tooltip content={<CustomTooltip />} />
