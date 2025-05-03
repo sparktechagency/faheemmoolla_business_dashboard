@@ -220,7 +220,7 @@ const OrderRow = ({ item, list, location }) => {
 
 
                       <p><span className="font-medium">Item & Qty:</span> {order.item}*{order.quantity}</p>
-                      <p><span className="font-medium">Price:</span> ${order.price}</p>
+                      <p><span className="font-medium">Price:</span> R {order.price}</p>
                     </div>
                   </div>
                 </div>
@@ -252,7 +252,7 @@ const OrderRow = ({ item, list, location }) => {
 
 
                       <p><span className="font-medium">Item & Qty:</span> {order.item}*{order.quantity}</p>
-                      <p><span className="font-medium">Price:</span> ${order.price}</p>
+                      <p><span className="font-medium">Price:</span> R {order.price}</p>
                     </div>
                   </div>
                 </div>
@@ -375,7 +375,7 @@ const OrderRow = ({ item, list, location }) => {
         className={`px-3 py-3 overflow-hidden ${location === "/offer" && "text-start px-2"
           } ${location === "/earning" && "text-start px-4"} overflow-ellipsis`}
       >
-        {endDate} {location === "/earning" && "$" + item?.businessEarning}
+        {endDate} {location === "/earning" && "R" + item?.businessEarning}
       </div>
 
       {
