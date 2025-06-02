@@ -1,6 +1,6 @@
-import { Button, Input, Form, notification } from "antd"; // Import notification
-import { signupImages, companyLogo, googleIcon } from "../../assets/assets";
+import { Button, Form, Input, notification } from "antd"; // Import notification
 import { useNavigate } from "react-router-dom";
+import { companyLogo, googleIcon, signupImages } from "../../assets/assets";
 import { useSignupMutation } from "../../features/auth/authApi";
 import { baseURL } from "../../utils/BaseURL";
 
@@ -15,19 +15,19 @@ export default function LoginPage() {
   };
 
   const onFinish = async (values) => {
-      const data = {name:values.name,phone:values.contact,email:values.email,password:values.password};
+    const data = { name: values.name, phone: values.contact, email: values.email, password: values.password };
     try {
-      const response =  await signup(data).unwrap();
+      const response = await signup(data).unwrap();
       localStorage.setItem("businessLoginId", response?.data?._id);
       route(`/auth/signup/verify?email=${values?.email}`);
     } catch (error) {
-      if(error.status === 400) {
+      if (error.status === 400) {
         notification.error({
           message: "Signup Failed",
           description: `${error?.data?.message}`,
         });
       }
-      
+
     }
   };
 
@@ -65,7 +65,7 @@ export default function LoginPage() {
                 label="Phone Number"
                 name="contact"
               >
-                <Input placeholder="Enter your Phone Number" />
+                <Input type="number" placeholder="Enter your Phone Number" />
               </Form.Item>
 
               <Form.Item
