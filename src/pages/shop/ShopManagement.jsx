@@ -52,7 +52,7 @@ const ShopManagement = () => {
                 }}
                 className="min-w-[200px] text-center"
               >
-                Yoco Payment Gateway
+                Add Your Bank Account
               </span>
             </button>
           )}
@@ -84,19 +84,31 @@ const ShopManagement = () => {
 };
 
 const ModalYoco = ({ onClose }) => {
-  const [yocoAccountNumber, setYocoAccountNumber] = useState("");
+  const [formData, setFormData] = useState({
+    yocoMerchantAcc: "",
+    bankHolderName: "",
+    bankBranch: "",
+    bankName: ""
+  });
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [yocoverify] = useYocoverifyMutation();
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    console.log(yocoAccountNumber)
+    setIsLoading(true);
 
     try {
-      const reponse = await yocoverify({ yocoMerchantAcc: yocoAccountNumber }).unwrap();
-      console.log(reponse);
+      const response = await yocoverify(formData).unwrap();
+      console.log(response);
       setIsSubmitted(true);
 
       setTimeout(() => {
@@ -104,9 +116,10 @@ const ModalYoco = ({ onClose }) => {
         window.location.reload();
       }, 1000);
     } catch (error) {
-      console.log(error)
+      console.log(error);
+    } finally {
+      setIsLoading(false);
     }
-
   };
 
   return (
@@ -114,7 +127,7 @@ const ModalYoco = ({ onClose }) => {
       <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-xl">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-800">
-            {isSubmitted ? "Success!" : "Add Yoco Merchant Account"}
+            {isSubmitted ? "Success!" : "Add Your Bank Account"}
           </h2>
           <button
             onClick={onClose}
@@ -134,22 +147,71 @@ const ModalYoco = ({ onClose }) => {
               </svg>
             </div>
             <p className="text-xl font-medium text-gray-800">
-              Yoco merchant account successfully added!
+              Bank account added successfully!
             </p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="yocoAccount" className="block text-sm font-medium text-gray-700 mb-1">
-                Yoco Merchant Account Number
+              <label htmlFor="bankHolderName" className="block text-sm font-medium text-gray-700 mb-1">
+                Name
               </label>
               <input
                 type="text"
-                id="yocoAccount"
-                value={yocoAccountNumber}
-                onChange={(e) => setYocoAccountNumber(e.target.value)}
+                id="bankHolderName"
+                name="bankHolderName"
+                value={formData.bankHolderName}
+                onChange={handleChange}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-[#C68C4E] focus:border-[#C68C4E] outline-none transition"
-                placeholder="Please enter your YocoMerchantAcc number"
+                placeholder="Please enter your Bank holder name"
+                required
+              />
+            </div>
+
+            <div>
+              <label htmlFor="yocoMerchantAcc" className="block text-sm font-medium text-gray-700 mb-1">
+                Account Number
+              </label>
+              <input
+                type="number"
+                id="yocoMerchantAcc"
+                name="yocoMerchantAcc"
+                value={formData.yocoMerchantAcc}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-[#C68C4E] focus:border-[#C68C4E] outline-none transition"
+                placeholder="Please enter your bank account number"
+                required
+              />
+            </div>
+
+            <div>
+              <label htmlFor="bankName" className="block text-sm font-medium text-gray-700 mb-1">
+                Bank Name
+              </label>
+              <input
+                type="text"
+                id="bankName"
+                name="bankName"
+                value={formData.bankName}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-[#C68C4E] focus:border-[#C68C4E] outline-none transition"
+                placeholder="Please enter your bank name"
+                required
+              />
+            </div>
+
+            <div>
+              <label htmlFor="bankBranch" className="block text-sm font-medium text-gray-700 mb-1">
+                Branch Name
+              </label>
+              <input
+                type="text"
+                id="bankBranch"
+                name="bankBranch"
+                value={formData.bankBranch}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-[#C68C4E] focus:border-[#C68C4E] outline-none transition"
+                placeholder="Please enter your branch name"
                 required
               />
             </div>

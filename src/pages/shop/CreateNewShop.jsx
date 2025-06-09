@@ -2,14 +2,13 @@ import {
   Button,
   Col,
   ConfigProvider,
-  DatePicker,
   Form,
   Input,
   message,
   Row,
   Space,
   TimePicker,
-  Upload,
+  Upload
 } from "antd";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -112,13 +111,13 @@ const CreateSingleShop = () => {
     try {
       const response = await create(formData).unwrap();
       dispatch(setShopId(response?.data?.userId));
-      
-      localStorage.setItem("shopId" , response.data._id)
+
+      localStorage.setItem("shopId", response.data._id)
 
       if (response.success === true) {
         navigate("/shop-management");
         window.location.reload();
-    }
+      }
     } catch (error) {
       error?.data?.errorMessages?.map((text) => message.error(text.message));
       console.log(error);

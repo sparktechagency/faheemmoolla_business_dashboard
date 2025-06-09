@@ -1,5 +1,5 @@
 import { Button, message, Modal, Spin } from 'antd';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useRequestPayoutMutation, useWalletBalanceQuery } from '../../features/wallet/walletApi';
 
 const Wallet = () => {
@@ -39,14 +39,14 @@ const Wallet = () => {
   // Loading state
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-screen bg-gray-100">
+      <div className="flex justify-center items-center h-[500px] bg-gray-100">
         <Spin size="default" />
       </div>
     );
   }
 
   return (
-    <div className="max-w-lg mx-auto p-8 bg-gradient-to-r from-[#C68C4E] to-[#703d07] shadow-xl rounded-3xl">
+    <div className="max-w-lg mx-auto p-8 bg-gradient-to-r mt-10 from-[#C68C4E] to-[#703d07] shadow-xl rounded-3xl">
       <h2 className="text-3xl font-bold text-white text-center mb-6">ManeageYour Wallet</h2>
       <div className="bg-white p-6 rounded-xl shadow-lg">
         <div className="space-y-6">

@@ -39,7 +39,16 @@ export const yocoApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["walletbalance"],
     }),
+
+    bankDetails: builder.query({
+      query: (data) => ({
+        url: `/user/get-bankinfo`,
+        method: "GET",
+        body: data,
+      }),
+    }),
+
   }),
 });
 
-export const { useWalletBalanceQuery, useWalletPayoutsQuery, useWalletSinglePayoutQuery, useRequestPayoutMutation, useYocoverifyMutation } = yocoApi;
+export const { useWalletBalanceQuery, useWalletPayoutsQuery, useWalletSinglePayoutQuery, useRequestPayoutMutation, useYocoverifyMutation, useBankDetailsQuery } = yocoApi;

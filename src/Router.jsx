@@ -1,34 +1,35 @@
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Layout from "./layouts/Layout";
-import Dashboard from "./pages/dashboard/Dashboard";
-import NotFound from "./pages/NotFound";
-import Order from "./pages/order/Order";
-import Help from "./pages/help/Help";
-import ShopManagement from "./pages/shop/ShopManagement";
-import CreateNewShop from "./pages/shop/CreateNewShop";
-import EditSingleShop from "./pages/shop/EditNewShop";
-import MealManagement from "./pages/meal/MealManagement";
-import CreateSingleMeal from "./pages/meal/CreateNewMeal";
-import EditSingleMeal from "./pages/meal/EditNewMeal";
-import Earning from "./pages/earning/Earning";
-import Offer from "./pages/offer/Offter";
-import CreateOffers from "./pages/offer/CreateOffer";
-import ViewDetails from "./pages/offer/ViewDetails";
-import Settings from "./pages/Settings/Settings";
-import Login from "./pages/auth/SignIn";
-import Signup from "./pages/auth/Signup";
-import ForgotPassword from "./pages/auth/ForgotPassword";
-import CheckEmail from "./pages/auth/CheckEmail";
-import SetPassword from "./pages/auth/SetPassword";
-import Verify from "./pages/auth/Verify_user";
-import SuccessReset from "./pages/auth/SucessReset";
-import Notification from "./pages/Notification";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import TermsConditions from "./pages/TermsConditions";
-import UserProfile from "./pages/UserProfile";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import BankInfo from "./components/bankInfo";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Wallet from "./components/wallet/Wallet";
+import Layout from "./layouts/Layout";
+import CheckEmail from "./pages/auth/CheckEmail";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import SetPassword from "./pages/auth/SetPassword";
+import Login from "./pages/auth/SignIn";
+import Signup from "./pages/auth/Signup";
+import SuccessReset from "./pages/auth/SucessReset";
+import Verify from "./pages/auth/Verify_user";
+import Dashboard from "./pages/dashboard/Dashboard";
+import Earning from "./pages/earning/Earning";
+import Help from "./pages/help/Help";
+import CreateSingleMeal from "./pages/meal/CreateNewMeal";
+import EditSingleMeal from "./pages/meal/EditNewMeal";
+import MealManagement from "./pages/meal/MealManagement";
+import NotFound from "./pages/NotFound";
+import Notification from "./pages/Notification";
+import CreateOffers from "./pages/offer/CreateOffer";
+import Offer from "./pages/offer/Offter";
+import ViewDetails from "./pages/offer/ViewDetails";
+import Order from "./pages/order/Order";
 import Payouts from "./pages/payouts/Payouts";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import Settings from "./pages/Settings/Settings";
+import CreateNewShop from "./pages/shop/CreateNewShop";
+import EditSingleShop from "./pages/shop/EditNewShop";
+import ShopManagement from "./pages/shop/ShopManagement";
+import TermsConditions from "./pages/TermsConditions";
+import UserProfile from "./pages/UserProfile";
 
 const Routers = () => {
   return (
@@ -58,6 +59,7 @@ const Routers = () => {
           <Route index element={<Dashboard />} />
           <Route path="order" element={<Order />} />
           <Route path="wallet" element={<Wallet />} />
+          <Route path="bank-information" element={<BankInfo />} />
 
           <Route path="shop-management">
             <Route index element={<ShopManagement />} />

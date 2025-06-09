@@ -353,6 +353,7 @@ const NotificationPopup = () => {
           </motion.div>
         )}
         <button onClick={() => navigate("/wallet")} className="px-4 py-2 text-white bg-[#C68C4E] rounded-lg hover:bg-[#74512d] font-bold duration-300">Wallet</button>
+        {profile?.data?.yocoAccountStatus && profile?.data?.yocoAccountStatus && <button onClick={() => navigate("/bank-information")} className="px-4 py-2 text-white bg-[#C68C4E] rounded-lg hover:bg-[#74512d] font-bold duration-300">Bank Info</button>}
       </div>
 
     </div>

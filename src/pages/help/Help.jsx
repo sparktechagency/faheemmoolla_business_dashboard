@@ -1,4 +1,4 @@
-import { ConfigProvider, Col, Row, Input, Button, Collapse, Form, message } from 'antd';
+import { Button, Col, Collapse, ConfigProvider, Form, Input, message, Row } from 'antd';
 import { useCreateContactMutation } from '../../features/help/helpApi';
 const { TextArea } = Input;
 
@@ -35,23 +35,23 @@ const items = [
 
 const Help = () => {
   const [form] = Form.useForm();
-  const [createContact,{isLoading}] = useCreateContactMutation();
+  const [createContact, { isLoading }] = useCreateContactMutation();
 
-  const onFinish =async (values) => {
+  const onFinish = async (values) => {
     const data = {
-      name:"pronab kumar",
+      name: "pronab kumar",
       firstName: values.firstName,
-      lastName:values.lastName,
-      email:values.email,
-      phone:values.phone,
-      message:values.message
+      lastName: values.lastName,
+      email: values.email,
+      phone: values.phone,
+      message: values.message
     }
 
     try {
-          const response = await createContact(data).unwrap();
-          message.success(response?.message)
+      const response = await createContact(data).unwrap();
+      message.success(response?.message)
     } catch (error) {
-          message.error("message not send some problem")
+      message.error("message not send some problem")
     }
     // message.success('Message sent successfully!');
     form.resetFields();
@@ -76,12 +76,12 @@ const Help = () => {
               theme={{
                 components: {
                   Button: {
-                    colorPrimary: '#EF9F27', 
+                    colorPrimary: '#EF9F27',
                     colorBgContainer: '#EF9F27',
-                    colorText: '#FFFFFF', 
+                    colorText: '#FFFFFF',
                   },
                   Input: {
-                    colorBorder: '#EF9F27', 
+                    colorBorder: '#EF9F27',
                     colorBgContainer: '#FFFFFF',
                     hoverBorderColor: '#EF9F27',
                     activeBorderColor: '#FCA210',
@@ -174,7 +174,7 @@ const Help = () => {
           <div>
             <h2 className='py-3 text-2xl font-bold'>Common Questions</h2>
             <div>
-              <Collapse items={items} defaultActiveKey={['1']} ghost style={{ fontWeight: "600" }} />
+              <Collapse items={items} ghost style={{ fontWeight: "600" }} />
             </div>
           </div>
         </div>
