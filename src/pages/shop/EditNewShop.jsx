@@ -1,15 +1,14 @@
-import { Form, Input, Row, Col, TimePicker, message } from "antd";
-import { ConfigProvider, DatePicker, Button, Upload, Space } from "antd";
-import { IoIosArrowBack } from "react-icons/io";
+import { Button, Col, ConfigProvider, Form, Input, Row, Space, TimePicker, Upload, message } from "antd";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { IoIosArrowBack } from "react-icons/io";
 import { useNavigate, useParams } from "react-router-dom";
+import CustomLoading from "../../components/CustomLoading";
 import {
   useGetShopByIdQuery,
   useUpdateMutation,
 } from "../../features/shop/shopApi";
-import CustomLoading from "../../components/CustomLoading";
 dayjs.extend(customParseFormat);
 const { TextArea } = Input;
 
@@ -269,7 +268,7 @@ const CreateSingleShop = () => {
                       style={inputStyle}
                       popupClassName="custom-timepicker-popup"
                       hideDisabledOptions
-                      onSelect={() => document.activeElement?.blur()}
+                      onCalendarChange={() => document.activeElement?.blur()}
                     />
                   </Form.Item>
                 </Col>
@@ -297,7 +296,7 @@ const CreateSingleShop = () => {
                       className="text-[20px] py-[11px]"
                       popupClassName="custom-timepicker-popup"
                       hideDisabledOptions
-                      onSelect={() => document.activeElement?.blur()} // Closes popup after selecting hour & minute
+                      onCalendarChange={() => document.activeElement?.blur()} // Closes popup after selecting hour & minute
                     />
                   </Form.Item>
                 </Col>

@@ -16,9 +16,11 @@ import { useState } from "react";
 import { IoIosArrowBack } from "react-icons/io";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import ShopLocationAutocomplete from "../../components/ShopLocationAutocomplete";
 import { setShopId } from "../../features/ids/idSlice";
 import { useCreateMutation } from "../../features/shop/shopApi";
 import useGeoLocation from "../../hooks/useGeoLocation";
+
 dayjs.extend(customParseFormat);
 const { TextArea } = Input;
 
@@ -48,15 +50,14 @@ const CreateSingleShop = () => {
   const [shopLogoFileList, setShopLogoFileList] = useState([]);
   const [shopBannerFileList, setShopBannerFileList] = useState([]);
   const [create, { isLoading, isError }] = useCreateMutation();
+  const [coordinates, setCoordinates] = useState([]);
 
   const {
-    coordinates,
+    coordinates: geoCoordinates,
     error: locationError,
     getLocation,
     loading: locationLoading,
   } = useGeoLocation();
-
-  // console.log(coordinates);
 
   const handleShopLogoChange = (info) => {
     setShopLogoFileList(info.fileList);
@@ -68,6 +69,10 @@ const CreateSingleShop = () => {
 
   const logoFile = shopLogoFileList[0];
   const bannerFile = shopBannerFileList[0];
+
+  const handleLocationSelect = (locationData) => {
+    setCoordinates(locationData.coordinates);
+  };
 
   const onFinish = async (values) => {
     console.log(values);
@@ -91,10 +96,7 @@ const CreateSingleShop = () => {
       shopLicence: values?.shopLicence,
       shopLocationName: values?.shopLocationName,
       shopLocation: {
-        coordinates: [
-          parseFloat(values?.latitude),
-          parseFloat(values?.longitude),
-        ],
+        coordinates: coordinates.length > 0 ? coordinates : [0, 0],
       },
       shopOpenTime: openTime,
       shopAddress: values?.shopLocationName,
@@ -128,9 +130,9 @@ const CreateSingleShop = () => {
     const allowedFormats = ["image/jpeg", "image/png", "image/webp"];
     if (!allowedFormats.includes(file.type)) {
       message.error("Invalid image format. Allowed: jpg, jpeg, png, webp");
-      return Upload.LIST_IGNORE; // Prevents file from being added
+      return Upload.LIST_IGNORE;
     }
-    return false; // Prevent automatic upload
+    return false;
   };
 
   return (
@@ -179,7 +181,6 @@ const CreateSingleShop = () => {
                         required: true,
                         message: (
                           <span style={{ fontSize: "14px" }}>
-                            {" "}
                             Please enter the owner name
                           </span>
                         ),
@@ -224,57 +225,8 @@ const CreateSingleShop = () => {
                       },
                     ]}
                   >
-                    <Input
-                      placeholder="Enter your shop location"
-                      style={inputStyle}
-                    />
-                  </Form.Item>
-                </Col>
-
-                <Col span={8}>
-                  <Form.Item
-                    label="longitude"
-                    className="custom-label"
-                    name="longitude"
-                    rules={[
-                      {
-                        required: true,
-                        message: (
-                          <span style={{ fontSize: "14px" }}>
-                            Please enter your longitude
-                          </span>
-                        ),
-                      },
-                    ]}
-                  >
-                    <Input
-                      type="number"
-                      placeholder="Enter your longitude"
-                      style={inputStyle}
-                    />
-                  </Form.Item>
-                </Col>
-
-                <Col span={8}>
-                  <Form.Item
-                    label="Latitude"
-                    className="custom-label"
-                    name="latitude"
-                    rules={[
-                      {
-                        required: true,
-                        message: (
-                          <span style={{ fontSize: "14px" }}>
-                            Please enter your Latitude
-                          </span>
-                        ),
-                      },
-                    ]}
-                  >
-                    <Input
-                      type="number"
-                      placeholder="Enter your Latitude"
-                      style={inputStyle}
+                    <ShopLocationAutocomplete
+                      onSelect={handleLocationSelect}
                     />
                   </Form.Item>
                 </Col>
@@ -330,7 +282,7 @@ const CreateSingleShop = () => {
                       className="text-[20px] py-[11px]"
                       popupClassName="custom-timepicker-popup"
                       hideDisabledOptions
-                      onSelect={() => document.activeElement?.blur()} // Closes popup after selecting hour & minute
+                      onCalendarChange={() => document.activeElement?.blur()}
                     />
                   </Form.Item>
                 </Col>
@@ -439,9 +391,9 @@ const CreateSingleShop = () => {
                       <Upload
                         fileList={shopBannerFileList}
                         onChange={handleShopBannerChange}
-                        beforeUpload={handleBeforeUpload} // Prevent automatic upload
+                        beforeUpload={handleBeforeUpload}
                         maxCount={1}
-                        showUploadList={false} // Hide the default file list
+                        showUploadList={false}
                         className="ms-2"
                       >
                         <Button style={{ fontSize: "14px" }}>

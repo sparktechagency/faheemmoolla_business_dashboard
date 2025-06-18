@@ -1,18 +1,19 @@
-import { useState, useEffect, useRef } from "react";
-import { Avatar, Badge, Button, Card, Input, Spin, Tag } from "antd";
-import { BellOutlined, CheckCircleOutlined } from "@ant-design/icons";
+import { CheckCircleOutlined, CloseOutlined, DeleteOutlined } from "@ant-design/icons";
+import { Button, message, Popconfirm, Spin, Tag } from "antd";
 import { motion } from "framer-motion";
-import { CiSearch } from "react-icons/ci";
+import moment from "moment";
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import io from "socket.io-client";
 import massageNotify from "../assets/notification.png";
-import { useProfileQuery } from "../features/profile/profileApi";
 import {
+  useDeleteAllNotificationMutation,
+  useDeleteSingleNotificationMutation,
   useGetNotificationQuery,
   useReadNotificationMutation,
 } from "../features/notification/notification";
-import io from "socket.io-client";
-import moment from "moment";
-import { baseURL, SocketBaseURL } from "../utils/BaseURL";
+import { useProfileQuery } from "../features/profile/profileApi";
+import { SocketBaseURL } from "../utils/BaseURL";
 
 const NotificationPopup = () => {
   const path = useLocation();
@@ -29,8 +30,9 @@ const NotificationPopup = () => {
     refetchOnReconnect: true,
   });
 
-  const [readNotification , {isLoading:updateLoading}] = useReadNotificationMutation();
-
+  const [readNotification, { isLoading: updateLoading }] = useReadNotificationMutation();
+  const [deleteAllNotification, { isLoading: isDeletingAll }] = useDeleteAllNotificationMutation();
+  const [deleteSingleNotification, { isLoading: isDeletingSingle }] = useDeleteSingleNotificationMutation();
 
   useEffect(() => {
     socketRef.current = io(SocketBaseURL);
@@ -107,11 +109,9 @@ const NotificationPopup = () => {
   };
 
   const formatTime = (timestamp) => {
-   if (!timestamp) return "Just now";
-
-       const bangladeshTime = moment(timestamp).add(6, 'hours');
-
-       return bangladeshTime.fromNow();
+    if (!timestamp) return "Just now";
+    const bangladeshTime = moment(timestamp).add(6, 'hours');
+    return bangladeshTime.fromNow();
   };
 
   const getTypeColor = (type) => {
@@ -133,92 +133,160 @@ const NotificationPopup = () => {
     try {
       await Promise.all(notifications.data.result.map(notif => readNotification(notif._id)));
       refetch();
+      message.success("All notifications marked as read");
     } catch (error) {
       console.error("Error marking all as read:", error);
+      message.error("Failed to mark all as read");
     }
   };
 
-  console.log(notifications?.data?.result)
+  const handleDeleteAllNotifications = async () => {
+    try {
+      await deleteAllNotification().unwrap();
+      refetch();
+      message.success("All notifications deleted successfully");
+    } catch (error) {
+      console.error("Error deleting all notifications:", error);
+      message.error("Failed to delete all notifications");
+    }
+  };
 
+  const handleDeleteSingleNotification = async (id, e) => {
+    e.stopPropagation();
+    try {
+      await deleteSingleNotification(id).unwrap();
+      refetch();
+      message.success("Notification deleted successfully");
+    } catch (error) {
+      console.error("Error deleting notification:", error);
+      message.error("Failed to delete notification");
+    }
+  };
 
   return (
     <div className="flex items-center justify-between pt-10">
-
-
-
-          <motion.div
-            ref={popupRef}
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
-            className="w-full p-10 bg-white border border-gray-200 rounded-xl"
-          >
-            <div
-
-            >
-              <div className="w-full cursor-pointer">
-                {loading || updateLoading ? (
-                  <div className="flex justify-center py-4">
-                    <Spin size="small" />
-                  </div>
-                ) : notifications?.data?.result?.length === 0 ? (
-                  <div className="text-center text-gray-500">
-                    <div className="flex justify-center">
-                      <img
-                        src={massageNotify}
-                        width={100}
-                        height={100}
-                        alt="Notification Icon"
-                      />
-                    </div>
-                    <h3 className="font-bold text-lg leading-[26px] pb-[5px]">
-                      There`s no notifications
-                    </h3>
-                    <p className="pb-[5px]">
-                      Your notifications will appear on this page.
-                    </p>
-                  </div>
-                ) : (
-                  notifications?.data?.result.map((notif, index) => (
-                    <div
-                      key={notif._id || index}
-                      className={`flex items-start p-3 transition duration-300 border-b border-gray-100 hover:bg-gray-50 ${
-                        !notif.read ? "bg-blue-50" : ""
-                      }`}
-                      onClick={() => handleNotificationClick(notif)}
-                    >
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between mb-1">
-                          {notif.showAlert && notif.type && (
-                            <Tag color={getTypeColor(notif.type)}>
-                              {notif.type}
-                            </Tag>
-                          )}
-                          <span className="ml-auto text-xs text-gray-500">
-                            {formatTime(notif.createdAt)}
-                          </span>
-                        </div>
-                        <p
-                          className={`text-sm ${
-                            !notif.read ? "font-medium" : "text-gray-600"
-                          }`}
-                        >
-                          {notif.text}
-                        </p>
-                        {notif.read && !notif.showAlert && (
-                          <div className="flex items-center mt-1 text-xs text-gray-500">
-                            <CheckCircleOutlined className="mr-1" /> Read
-                          </div>
+      <motion.div
+        ref={popupRef}
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -10 }}
+        transition={{ duration: 0.3 }}
+        className="w-full p-10 bg-white border border-gray-200 rounded-xl"
+      >
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold">Notifications</h2>
+          <div className="flex space-x-2">
+            {notifications?.data?.result?.length > 0 && (
+              <>
+                <Button
+                  type="primary"
+                  size="small"
+                  onClick={markAllAsRead}
+                  disabled={unreadCount === 0 || updateLoading}
+                  loading={updateLoading}
+                >
+                  Mark all as read
+                </Button>
+                <Popconfirm
+                  title="Are you sure to delete all notifications?"
+                  onConfirm={handleDeleteAllNotifications}
+                  okText="Yes"
+                  cancelText="No"
+                >
+                  <Button
+                    danger
+                    size="small"
+                    icon={<DeleteOutlined />}
+                    disabled={notifications?.data?.result?.length === 0 || isDeletingAll}
+                    loading={isDeletingAll}
+                  >
+                    Delete all
+                  </Button>
+                </Popconfirm>
+              </>
+            )}
+          </div>
+        </div>
+        <div>
+          <div className="w-full cursor-pointer">
+            {loading || updateLoading || isDeletingAll ? (
+              <div className="flex justify-center py-4">
+                <Spin size="small" />
+              </div>
+            ) : notifications?.data?.result?.length === 0 ? (
+              <div className="text-center text-gray-500">
+                <div className="flex justify-center">
+                  <img
+                    src={massageNotify}
+                    width={100}
+                    height={100}
+                    alt="Notification Icon"
+                  />
+                </div>
+                <h3 className="font-bold text-lg leading-[26px] pb-[5px]">
+                  There's no notifications
+                </h3>
+                <p className="pb-[5px]">
+                  Your notifications will appear on this page.
+                </p>
+              </div>
+            ) : (
+              notifications?.data?.result.map((notif, index) => (
+                <div
+                  key={notif._id || index}
+                  className={`flex items-start p-3 transition duration-300 border-b border-gray-100 hover:bg-gray-50 ${!notif.read ? "bg-blue-50" : ""
+                    }`}
+                  onClick={() => handleNotificationClick(notif)}
+                >
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center">
+                        {notif.showAlert && notif.type && (
+                          <Tag color={getTypeColor(notif.type)}>
+                            {notif.type}
+                          </Tag>
                         )}
                       </div>
+                      <div className="flex items-center">
+                        <span className="text-xs text-gray-500 mr-2">
+                          {formatTime(notif.createdAt)}
+                        </span>
+                        <Popconfirm
+                          title="Delete this notification?"
+                          onConfirm={(e) => handleDeleteSingleNotification(notif._id, e)}
+                          onCancel={(e) => e.stopPropagation()}
+                          okText="Yes"
+                          cancelText="No"
+                        >
+                          <Button
+                            type="text"
+                            size="small"
+                            icon={<CloseOutlined />}
+                            onClick={(e) => e.stopPropagation()}
+                            loading={isDeletingSingle}
+                            className="text-gray-400 hover:text-red-500"
+                          />
+                        </Popconfirm>
+                      </div>
                     </div>
-                  ))
-                )}
-              </div>
-            </div>
-          </motion.div>
-
+                    <p
+                      className={`text-sm ${!notif.read ? "font-medium" : "text-gray-600"
+                        }`}
+                    >
+                      {notif.text}
+                    </p>
+                    {notif.read && !notif.showAlert && (
+                      <div className="flex items-center mt-1 text-xs text-gray-500">
+                        <CheckCircleOutlined className="mr-1" /> Read
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </motion.div>
     </div>
   );
 };

@@ -1,17 +1,15 @@
-import { Form, Input, Row, Col, message, TimePicker, Spin } from "antd";
-import { ConfigProvider, Button, Upload, Space, Select } from "antd";
-import { IoIosArrowBack } from "react-icons/io";
+import { Button, Col, ConfigProvider, Form, Input, message, Row, Select, TimePicker, Upload } from "antd";
+import ImgCrop from "antd-img-crop";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { useEffect, useState } from "react";
+import { IoIosArrowBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
-import ImgCrop from "antd-img-crop";
 import {
   useCreateMealMutation,
   useGetCategoriesQuery,
 } from "../../features/meal/mealApi";
 import { useAllShopQuery } from "../../features/shop/shopApi";
-import { MdTune } from "react-icons/md";
 dayjs.extend(customParseFormat);
 const { TextArea } = Input;
 const { Option } = Select;
@@ -136,17 +134,15 @@ const CreateSingleMeal = () => {
     // console.log(values?.collectionTime);
     const openTime = values.collectionTime[0];
     const closeTime = values.collectionTime[1];
-  
-    const open = `${openTime.$H < 10 ? "0" : ""}${openTime.$H}:${
-      openTime.$m < 10 ? "0" : ""
-    }${openTime.$m}`;
-    const close = `${closeTime.$H < 10 ? "0" : ""}${closeTime.$H}:${
-      closeTime.$m < 10 ? "0" : ""
-    }${closeTime.$m}`;
+
+    const open = `${openTime.$H < 10 ? "0" : ""}${openTime.$H}:${openTime.$m < 10 ? "0" : ""
+      }${openTime.$m}`;
+    const close = `${closeTime.$H < 10 ? "0" : ""}${closeTime.$H}:${closeTime.$m < 10 ? "0" : ""
+      }${closeTime.$m}`;
     const time = `${open} to ${close}`;
 
-    
-  
+
+
     const mealData = {
       shopId: localStorage.getItem("shopId"),
       name: values.name,
@@ -159,10 +155,10 @@ const CreateSingleMeal = () => {
       dietaryPreference: values?.dietaryPreference,
       description: values.description,
     };
-  
+
     const formData = new FormData();
     formData.append("data", JSON.stringify(mealData));
-  
+
     // Ensure only one image is appended
     if (fileList.length > 0) {
       formData.append("image", fileList[0]?.originFileObj);
@@ -302,7 +298,7 @@ const CreateSingleMeal = () => {
                       style={inputStyle}
                       popupClassName="custom-timepicker-popup"
                       hideDisabledOptions
-                      onSelect={() => document.activeElement?.blur()}
+                      onCalendarChange={() => document.activeElement?.blur()}
                     />
                   </Form.Item>
                 </Col>

@@ -1,18 +1,16 @@
-import { Form, Input, Row, Col, message, TimePicker, Spin } from "antd";
-import { ConfigProvider, Button, Upload, Space, Select } from "antd";
-import { IoIosArrowBack } from "react-icons/io";
+import { Button, Col, ConfigProvider, Form, Input, message, Row, Select, TimePicker, Upload } from "antd";
+import ImgCrop from "antd-img-crop";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { useEffect, useState } from "react";
+import { IoIosArrowBack } from "react-icons/io";
 import { useNavigate, useParams } from "react-router-dom";
+import CustomLoading from "../../components/CustomLoading";
 import {
   useGetCategoriesQuery,
   useGetMealsByShopQuery,
   useUpdateMealMutation,
 } from "../../features/meal/mealApi";
-import { useSelector } from "react-redux";
-import CustomLoading from "../../components/CustomLoading";
-import ImgCrop from "antd-img-crop";
 import { baseURL } from "../../utils/BaseURL";
 
 dayjs.extend(customParseFormat);
@@ -287,7 +285,7 @@ const CreateSingleMeal = () => {
                       style={inputStyle}
                       popupClassName="custom-timepicker-popup"
                       hideDisabledOptions
-                      onSelect={() => document.activeElement?.blur()}
+                      onCalendarChange={() => document.activeElement?.blur()}
                     />
                   </Form.Item>
                 </Col>

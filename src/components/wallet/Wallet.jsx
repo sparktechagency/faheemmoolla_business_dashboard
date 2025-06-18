@@ -39,7 +39,7 @@ const Wallet = () => {
   // Loading state
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-[500px] bg-gray-100">
+      <div className="flex justify-center items-center h-[500px]">
         <Spin size="default" />
       </div>
     );
