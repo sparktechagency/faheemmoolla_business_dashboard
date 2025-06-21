@@ -118,14 +118,14 @@ export default function LoginPage() {
                 <div className="flex-grow border-t border-gray-300"></div>
               </div>
 
-              <Button
+              {/* <Button
                 onClick={handleGoogleLogin}
                 className="flex items-center justify-center w-full gap-2 custom-google-btn"
                 size="large"
               >
                 <img src={googleIcon} className="w-[20px] h-[20px]" alt="Google logo" />
                 Sign in with Google
-              </Button>
+              </Button> */}
 
               <p className="flex items-center justify-center mt-4 text-sm text-gray-600">
                 Don't have an account?

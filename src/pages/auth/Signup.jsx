@@ -1,6 +1,6 @@
 import { Button, Form, Input, notification } from "antd"; // Import notification
 import { useNavigate } from "react-router-dom";
-import { companyLogo, googleIcon, signupImages } from "../../assets/assets";
+import { companyLogo, signupImages } from "../../assets/assets";
 import { useSignupMutation } from "../../features/auth/authApi";
 import { baseURL } from "../../utils/BaseURL";
 
@@ -115,10 +115,10 @@ export default function LoginPage() {
                 <div className="flex-grow border-t border-gray-300"></div>
               </div>
 
-              <Button onClick={handleGoogleLogin} className="flex items-center justify-center w-full gap-2 custom-google-btn" size="large">
+              {/* <Button onClick={handleGoogleLogin} className="flex items-center justify-center w-full gap-2 custom-google-btn" size="large">
                 <img src={googleIcon} className="w-[20px] h-[20px]" alt="Google logo" />
                 Sign in with Google
-              </Button>
+              </Button> */}
 
               <p className="flex items-center justify-center mt-4 text-sm text-gray-600">
                 Don’t have an account?
