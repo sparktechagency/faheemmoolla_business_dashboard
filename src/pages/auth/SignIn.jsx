@@ -37,7 +37,7 @@ export default function LoginPage() {
   const handleGoogleLogin = () => {
     try {
       // Redirect the user to initiate Google OAuth flow
-      window.location.href = `${baseURL}/api/v1/auth/google`;
+      window.location.href = `${baseURL}/api/v1/auth/google/bussiness`;
     } catch (error) {
       message.error('Failed to initiate Google login. Please try again.');
     }
