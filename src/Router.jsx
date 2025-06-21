@@ -1,6 +1,6 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 
-import BankDetailsView from './components/bankInfo';
+import BankDetailsView from './components/BankDetailsView';
 import ProtectedRoute from "./components/ProtectedRoute";
 import Wallet from "./components/wallet/Wallet";
 import Layout from "./layouts/Layout";
