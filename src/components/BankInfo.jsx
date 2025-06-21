@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useBankDetailsQuery, useYocoverifyMutation } from "../features/wallet/walletApi";
 
-const BankInfoCard = ({ bankData, onEdit }) => {
+const BankInfo = ({ bankData, onEdit }) => {
   return (
     <div className="bg-gradient-to-br flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-xl overflow-hidden w-full max-w-md transform transition-all hover:scale-[1.02] hover:shadow-2xl">
@@ -377,7 +377,7 @@ const BankDetailsView = () => {
   return (
     <div className="relative overflow-hidden min-h-[600px] mt-10">
       <div className={`transition-all duration-300 ${isEditing ? `translate-x-[-100%] ${animation}` : `translate-x-0 ${animation}`}`}>
-        <BankInfoCard bankData={bankData} onEdit={handleEdit} />
+        <BankInfo bankData={bankData} onEdit={handleEdit} />
       </div>
       <div className={`absolute top-0 w-full transition-all duration-300 ${isEditing ? `translate-x-0 ${animation}` : `translate-x-[100%] ${animation}`}`}>
         <EditBankForm bankData={bankData} onCancel={handleCancel} onSubmit={handleSubmit} isEditing={isEditing} />

@@ -1,36 +1,64 @@
-import { Button, Input, Form, message } from "antd";
-import { login,googleIcon,companyLogo } from "../../assets/assets";
-import { useNavigate } from "react-router-dom";
+// pages/auth/LoginPage.jsx
+import { Button, Form, Input, message } from "antd";
+import { useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { companyLogo, googleIcon, login } from "../../assets/assets";
 import { useLoginMutation } from "../../features/auth/authApi";
 import { saveToken } from "../../features/auth/authService";
 import { baseURL } from "../../utils/BaseURL";
 
-
 export default function LoginPage() {
   const route = useNavigate();
-  const [Login, {isLoading}] = useLoginMutation();
+  const [searchParams] = useSearchParams();
+  const [Login, { isLoading }] = useLoginMutation();
 
+  // Handle error messages from URL params
+  useEffect(() => {
+    const error = searchParams.get('error');
+    if (error) {
+      switch (error) {
+        case 'google_auth_failed':
+          message.error('Google authentication failed. Please try again.');
+          break;
+        case 'no_auth_code':
+          message.error('Authentication failed. No authorization code received.');
+          break;
+        case 'callback_error':
+          message.error('Authentication error occurred. Please try again.');
+          break;
+        default:
+          message.error('An error occurred during authentication.');
+      }
+      // Clear the error from URL
+      route('/auth/login', { replace: true });
+    }
+  }, [searchParams, route]);
 
   const handleGoogleLogin = () => {
-    // Redirect the user to initiate Google OAuth flow
-    window.location.href = `${baseURL}/api/v1/auth/google`;
+    try {
+      // Redirect the user to initiate Google OAuth flow
+      window.location.href = `${baseURL}/api/v1/auth/google`;
+    } catch (error) {
+      message.error('Failed to initiate Google login. Please try again.');
+    }
   };
 
   const onFinish = async (values) => {
-     try {
-          const response = await Login(values).unwrap();
-          saveToken(response?.data?.token)
-          localStorage.setItem("businessLoginId", response?.data?.user?._id);
-          route("/")
-        } catch (error) {
-          if(error?.data){
-            message.error(error?.data?.message);
-          }else{
-            message.error("Server error Please try Another time")
-          }
-        }
+    try {
+      const response = await Login(values).unwrap();
+      saveToken(response?.data?.token);
+      localStorage.setItem("businessLoginId", response?.data?.user?._id);
+      message.success('Login successful!');
+      route("/dashboard");
+    } catch (error) {
+      if (error?.data) {
+        message.error(error?.data?.message);
+      } else {
+        message.error("Server error. Please try again later.");
+      }
+    }
   };
-  
+
   return (
     <div className="flex items-center justify-center h-screen overflow-hidden">
       <div className="flex w-full">
@@ -65,7 +93,12 @@ export default function LoginPage() {
               </Form.Item>
 
               <div className="mb-4 text-sm text-end">
-                <p onClick={()=>route('/auth/login/forgot_password')} className="text-[#1E1E1E] cursor-pointer hover:underline">Forgot password?</p>
+                <p
+                  onClick={() => route('/auth/login/forgot_password')}
+                  className="text-[#1E1E1E] cursor-pointer hover:underline"
+                >
+                  Forgot password?
+                </p>
               </div>
 
               <Button
@@ -85,14 +118,23 @@ export default function LoginPage() {
                 <div className="flex-grow border-t border-gray-300"></div>
               </div>
 
-              <Button onClick={handleGoogleLogin} className="flex items-center justify-center w-full gap-2 custom-google-btn" size="large">
+              <Button
+                onClick={handleGoogleLogin}
+                className="flex items-center justify-center w-full gap-2 custom-google-btn"
+                size="large"
+              >
                 <img src={googleIcon} className="w-[20px] h-[20px]" alt="Google logo" />
                 Sign in with Google
               </Button>
 
               <p className="flex items-center justify-center mt-4 text-sm text-gray-600">
-                Don`t have an account?
-                <span onClick={()=>route('/auth/signup')} className="font-semibold cursor-pointer text-[#C68C4E] hover:underline ml-1">Sign up</span>
+                Don't have an account?
+                <span
+                  onClick={() => route('/auth/signup')}
+                  className="font-semibold cursor-pointer text-[#C68C4E] hover:underline ml-1"
+                >
+                  Sign up
+                </span>
               </p>
             </Form>
           </div>

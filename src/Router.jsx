@@ -1,10 +1,12 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import BankInfo from "./components/bankInfo";
+
+import BankDetailsView from './components/bankInfo';
 import ProtectedRoute from "./components/ProtectedRoute";
 import Wallet from "./components/wallet/Wallet";
 import Layout from "./layouts/Layout";
 import CheckEmail from "./pages/auth/CheckEmail";
 import ForgotPassword from "./pages/auth/ForgotPassword";
+import GoogleCallback from './pages/auth/GoogleCallback';
 import SetPassword from "./pages/auth/SetPassword";
 import Login from "./pages/auth/SignIn";
 import Signup from "./pages/auth/Signup";
@@ -46,6 +48,7 @@ const Routers = () => {
         />
         <Route path="/auth/login/check_email" element={<CheckEmail />} />
         <Route path="/auth/login/set_password" element={<SetPassword />} />
+        <Route path="/api/v1/auth/google/callback" element={<GoogleCallback />} />
 
         {/* Protected Routes */}
         <Route
@@ -59,7 +62,7 @@ const Routers = () => {
           <Route index element={<Dashboard />} />
           <Route path="order" element={<Order />} />
           <Route path="wallet" element={<Wallet />} />
-          <Route path="bank-information" element={<BankInfo />} />
+          <Route path="bank-information" element={<BankDetailsView />} />
 
           <Route path="shop-management">
             <Route index element={<ShopManagement />} />
