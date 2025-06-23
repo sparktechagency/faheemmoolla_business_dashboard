@@ -15,9 +15,9 @@ export default defineConfig({
     ],
     proxy: {
       '/api/places': {
-        target: 'https://maps.googleapis.com/maps/api/place',
+        target: 'https://maps.googleapis.com',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/places/, ''),
+        rewrite: (path) => path.replace(/^\/api\/places/, '/maps/api/place'),
         secure: true,
         headers: {
           'Accept': 'application/json',
