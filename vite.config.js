@@ -12,7 +12,19 @@ export default defineConfig({
       'www.business.foodsavr.com',
       'localhost',
       '127.0.0.1'
-    ]
+    ],
+    proxy: {
+      '/api/places': {
+        target: 'https://maps.googleapis.com/maps/api/place',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/places/, ''),
+        secure: true,
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        }
+      }
+    }
   },
   build: {
     sourcemap: false,

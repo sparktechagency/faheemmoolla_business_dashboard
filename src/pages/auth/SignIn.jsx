@@ -2,7 +2,7 @@
 import { Button, Form, Input, message } from "antd";
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { companyLogo, googleIcon, login } from "../../assets/assets";
+import { companyLogo, login } from "../../assets/assets";
 import { useLoginMutation } from "../../features/auth/authApi";
 import { saveToken } from "../../features/auth/authService";
 import { baseURL } from "../../utils/BaseURL";
@@ -49,7 +49,7 @@ export default function LoginPage() {
       saveToken(response?.data?.token);
       localStorage.setItem("businessLoginId", response?.data?.user?._id);
       message.success('Login successful!');
-      route("/dashboard");
+      route("/");
     } catch (error) {
       if (error?.data) {
         message.error(error?.data?.message);
