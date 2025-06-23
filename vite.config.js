@@ -18,7 +18,7 @@ export default defineConfig({
         target: 'https://maps.googleapis.com',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/places/, '/maps/api/place'),
-        secure: true,
+        secure: false, // Set to false if you get SSL errors in dev
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
