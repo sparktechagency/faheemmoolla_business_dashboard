@@ -1,14 +1,13 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
 import { message, Spin } from "antd";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import { Link } from "react-router-dom";
 import {
   useDeleteMealMutation,
   useUpdateMealStatusMutation,
 } from "../../features/meal/mealApi";
 import { baseURL } from "../../utils/BaseURL";
-import Loading from "../Loading";
-import { motion, AnimatePresence } from "framer-motion";
-import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
 const SingleMeal = ({ items }) => {
   const [mealStatus, setMealStatus] = useState(items.mealStatus);
@@ -40,7 +39,7 @@ const SingleMeal = ({ items }) => {
         if (response.success) {
           setMealStatus((prev) => !prev);
           message.success(
-            `Meal ${items?.mealStatus ? "disabled" : "enabled"} successfully.`
+            `Meal ${items?.mealStatus ? "enabled" : "disabled"} successfully.`
           );
         }
       }
@@ -106,7 +105,7 @@ const SingleMeal = ({ items }) => {
           <p>Collection Time: {items?.collectionTime}</p>
           <p>Dietary Preference: <span className="truncate">{items?.dietaryPreference}</span></p>
         </div>
-        
+
         <div className="flex-grow overflow-hidden mb-4">
           <textarea
             readOnly
@@ -115,13 +114,12 @@ const SingleMeal = ({ items }) => {
             defaultValue={items?.description}
           />
         </div>
-        
+
         <div className="flex px-3 py-3 mt-auto text-sm justify-evenly">
           <button
             onClick={() => handleAction("off", items?._id)}
-            className={`px-4 py-1 font-semibold text-gray-700 border ${
-              mealStatus ? "border-gray-700 opacity-50" : "border-[#00721E]"
-            } rounded-md`}
+            className={`px-4 py-1 font-semibold text-gray-700 border ${mealStatus ? "border-gray-700 opacity-50" : "border-[#00721E]"
+              } rounded-md`}
             disabled={mealStatusLoading || isLoading}
           >
             {mealStatus ? "Turn On" : "Turn Off"}
