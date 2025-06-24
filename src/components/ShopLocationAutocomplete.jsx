@@ -7,6 +7,7 @@ const ShopLocationAutocomplete = ({ onSelect, value, onChange }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [hasUserInteracted, setHasUserInteracted] = useState(false);
+  const [lastSearchValue, setLastSearchValue] = useState('');
   const componentRef = useRef(null);
   const timeoutRef = useRef(null);
   const autoSelectTimeoutRef = useRef(null);
@@ -35,9 +36,18 @@ const ShopLocationAutocomplete = ({ onSelect, value, onChange }) => {
       }
     };
 
+    const handleGlobalKeyDown = (event) => {
+      // Auto-select on Tab key when suggestions are available
+      if (event.key === 'Tab' && suggestions.length > 0 && !hasUserInteracted) {
+        handleAutoSelectFirstSuggestion();
+      }
+    };
+
     document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleGlobalKeyDown);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleGlobalKeyDown);
     };
   }, [suggestions, hasUserInteracted]);
 
@@ -56,7 +66,7 @@ const ShopLocationAutocomplete = ({ onSelect, value, onChange }) => {
   const handleAutoSelectFirstSuggestion = async () => {
     if (suggestions.length > 0) {
       const firstSuggestion = suggestions[0];
-      await handleSuggestionSelection(firstSuggestion, true, value); // Pass current input value
+      await handleSuggestionSelection(firstSuggestion, true, lastSearchValue); // Use stored search value
     }
   };
 
@@ -180,7 +190,21 @@ const ShopLocationAutocomplete = ({ onSelect, value, onChange }) => {
     }
   };
 
-  const handleKeyDown = (e) => {
+  const handleInputFocus = () => {
+    // Reset interaction state when input gets focus
+    setHasUserInteracted(false);
+  };
+
+  const handleInputBlur = () => {
+    // Add a small delay to handle blur event properly
+    setTimeout(() => {
+      if (suggestions.length > 0 && !hasUserInteracted) {
+        handleAutoSelectFirstSuggestion();
+      }
+    }, 100);
+  };
+
+  const handleInputKeyDown = (e) => {
     if (e.key === 'Enter' && suggestions.length > 0) {
       e.preventDefault();
       handleSuggestionSelection(suggestions[0], false);
@@ -198,7 +222,9 @@ const ShopLocationAutocomplete = ({ onSelect, value, onChange }) => {
         type="text"
         value={value}
         onChange={handleInputChange}
-        onKeyDown={handleKeyDown}
+        onFocus={handleInputFocus}
+        onBlur={handleInputBlur}
+        onKeyDown={handleInputKeyDown}
         placeholder="Enter your shop location"
         style={{
           width: "100%",
