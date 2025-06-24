@@ -51,6 +51,8 @@ const CreateSingleShop = () => {
   const [shopBannerFileList, setShopBannerFileList] = useState([]);
   const [create, { isLoading, isError }] = useCreateMutation();
   const [coordinates, setCoordinates] = useState([]);
+  const [locationName, setLocationName] = useState('');
+
 
   const {
     coordinates: geoCoordinates,
@@ -71,11 +73,20 @@ const CreateSingleShop = () => {
   const bannerFile = shopBannerFileList[0];
 
   const handleLocationSelect = (locationData) => {
+
     setCoordinates(locationData.coordinates);
+    setLocationName(locationData.address);
+  };
+
+  const handleLocationChange = (e) => {
+    console.log(e)
+    setLocationName(e.target.value);
   };
 
   const onFinish = async (values) => {
-    console.log(values);
+    console.log("values");
+
+    console.log(values)
     const closetimehour = values.shopCloseTime?.hour() || "00";
     const closeTimeMinute = values.shopCloseTime?.minute() || "00";
     const opentimehour = values.shopOpenTime?.hour() || "00";
@@ -94,24 +105,28 @@ const CreateSingleShop = () => {
       shopName: values.shopName,
       shopOwnerName: values?.shopOwnerName,
       shopLicence: values?.shopLicence,
-      shopLocationName: values?.shopLocationName,
+      shopLocationName: locationName,
       shopLocation: {
         coordinates: coordinates.length > 0 ? coordinates : [0, 0],
       },
       shopOpenTime: openTime,
-      shopAddress: values?.shopLocationName,
+      shopAddress: locationName,
       shopCloseTime: closeTime,
       minOrderPrice: parseFloat(values.minOrderPrice),
       minOrderOfferPrice: parseFloat(values?.minOrderOfferPrice),
       shopDescription: values.shopDescription,
     };
 
+
+    console.log("shopdata")
+    console.log(shopData)
     formData.append("data", JSON.stringify(shopData));
     formData.append("logo", logoFile.originFileObj);
     formData.append("banner", bannerFile.originFileObj);
 
     try {
       const response = await create(formData).unwrap();
+      console.log(response)
       dispatch(setShopId(response?.data?.userId));
 
       localStorage.setItem("shopId", response.data._id)
@@ -227,6 +242,8 @@ const CreateSingleShop = () => {
                   >
                     <ShopLocationAutocomplete
                       onSelect={handleLocationSelect}
+                      value={locationName}
+                      onChange={handleLocationChange}
                     />
                   </Form.Item>
                 </Col>
