@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { Button, Input, Typography, message } from "antd";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Input, Button, Typography, message } from "antd";
-import SuccessSign from "../auth/SuccessSign"; // Ensure the correct import path
 import { useResendOtpMutation, useVerifyEmailMutation } from "../../features/auth/authApi";
 import { saveToken } from "../../features/auth/authService";
+import SuccessSign from "../auth/SuccessSign"; // Ensure the correct import path
 
 const { Title, Text } = Typography;
 
@@ -53,7 +53,8 @@ const Verification = () => {
       saveToken(response?.data?.accessToken);
       setSuccess(true);
     } catch (error) {
-      console.error("OTP verification failed:", error);
+      message.error(error?.data?.message);
+      console.error("OTP verification failed:", error.data.message);
     }
   };
 

@@ -14,17 +14,40 @@ export default function LoginPage() {
     window.location.href = `${baseURL}/api/v1/auth/google`;
   };
 
-  // Phone number validator
+  // Updated phone number validator
   const validatePhoneNumber = (_, value) => {
-    if (!value || !value.isValid) {
+    console.log('Phone validation value:', value); // Debug log
+
+    // If no value provided, it's valid (optional field)
+    if (!value) {
+      return Promise.resolve();
+    }
+
+    // Check if value has the required structure
+    if (!value.phoneNumber || !value.countryCode) {
       return Promise.reject(new Error("Please enter a valid phone number"));
     }
+
+    // Additional validation for minimum length
+    if (value.phoneNumber.length < 7) {
+      return Promise.reject(new Error("Please enter a valid phone number"));
+    }
+
+    // Optional: Check if the component has isValid property
+    if (value.hasOwnProperty('isValid') && !value.isValid) {
+      return Promise.reject(new Error("Please enter a valid phone number"));
+    }
+
     return Promise.resolve();
   };
 
   const onFinish = async (values) => {
+    console.log('Form values:', values); // Debug log
+
     // Format the phone number with country code before sending to the server
-    const phoneNumber = values.phone ? `+${values.phone.countryCode}${values.phone.phoneNumber}` : null;
+    const phoneNumber = values.phone && values.phone.phoneNumber
+      ? `+${values.phone.countryCode}${values.phone.phoneNumber}`
+      : null;
 
     const data = {
       name: values.name,
@@ -33,15 +56,23 @@ export default function LoginPage() {
       password: values.password
     };
 
+    console.log('Sending data:', data); // Debug log
+
     try {
       const response = await signup(data).unwrap();
       localStorage.setItem("businessLoginId", response?.data?._id);
       route(`/auth/signup/verify?email=${values?.email}`);
     } catch (error) {
+      console.error('Signup error:', error); // Debug log
       if (error.status === 400) {
         notification.error({
           message: "Signup Failed",
           description: `${error?.data?.message}`,
+        });
+      } else {
+        notification.error({
+          message: "Signup Failed",
+          description: "An unexpected error occurred. Please try again.",
         });
       }
     }
@@ -84,8 +115,10 @@ export default function LoginPage() {
               >
                 <PhoneInput
                   enableSearch
-                  country="ng" // Default country (Nigeria in this case)
+                  country="ng" // Default country (Nigeria)
                   placeholder="Enter your phone number"
+                  searchPlaceholder="Search country"
+                  searchNotFound="No country found"
                 />
               </Form.Item>
 
@@ -136,9 +169,25 @@ export default function LoginPage() {
                 <div className="flex-grow border-t border-gray-300"></div>
               </div>
 
+              <Button
+                onClick={handleGoogleLogin}
+                className="w-full"
+                size="large"
+                style={{
+                  backgroundColor: "transparent",
+                  borderColor: "#C68C4E",
+                  color: "#C68C4E"
+                }}
+              >
+                Continue with Google
+              </Button>
+
               <p className="flex items-center justify-center mt-4 text-sm text-gray-600">
-                Don't have an account?
-                <span onClick={() => route("/auth/login")} className="ml-1 font-semibold cursor-pointer text-primary hover:underline">
+                Already have an account?
+                <span
+                  onClick={() => route("/auth/login")}
+                  className="ml-1 font-semibold cursor-pointer text-primary hover:underline"
+                >
                   Log in
                 </span>
               </p>
@@ -146,7 +195,11 @@ export default function LoginPage() {
           </div>
         </div>
         <div className="hidden bg-center bg-cover md:flex md:w-6/12 lg:w-8/12">
-          <img src={signupImages} className="object-cover w-full bg-center bg-cover" alt="Login Illustration" />
+          <img
+            src={signupImages}
+            className="object-cover w-full bg-center bg-cover"
+            alt="Signup Illustration"
+          />
         </div>
       </div>
     </div>
