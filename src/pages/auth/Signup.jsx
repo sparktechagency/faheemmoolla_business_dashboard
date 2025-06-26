@@ -1,21 +1,38 @@
-import { Button, Form, Input, notification } from "antd"; // Import notification
+import { Button, Form, Input, notification } from "antd";
+import PhoneInput from "antd-phone-input";
 import { useNavigate } from "react-router-dom";
 import { companyLogo, signupImages } from "../../assets/assets";
 import { useSignupMutation } from "../../features/auth/authApi";
 import { baseURL } from "../../utils/BaseURL";
 
-
 export default function LoginPage() {
   const route = useNavigate();
-
+  const [form] = Form.useForm();
   const [signup, { isLoading }] = useSignupMutation();
 
   const handleGoogleLogin = () => {
     window.location.href = `${baseURL}/api/v1/auth/google`;
   };
 
+  // Phone number validator
+  const validatePhoneNumber = (_, value) => {
+    if (!value || !value.isValid) {
+      return Promise.reject(new Error("Please enter a valid phone number"));
+    }
+    return Promise.resolve();
+  };
+
   const onFinish = async (values) => {
-    const data = { name: values.name, phone: values.contact, email: values.email, password: values.password };
+    // Format the phone number with country code before sending to the server
+    const phoneNumber = values.phone ? `+${values.phone.countryCode}${values.phone.phoneNumber}` : null;
+
+    const data = {
+      name: values.name,
+      phone: phoneNumber,
+      email: values.email,
+      password: values.password
+    };
+
     try {
       const response = await signup(data).unwrap();
       localStorage.setItem("businessLoginId", response?.data?._id);
@@ -27,7 +44,6 @@ export default function LoginPage() {
           description: `${error?.data?.message}`,
         });
       }
-
     }
   };
 
@@ -41,7 +57,7 @@ export default function LoginPage() {
               Create an account
             </h2>
 
-            <Form layout="vertical" onFinish={onFinish} className="w-full">
+            <Form form={form} layout="vertical" onFinish={onFinish} className="w-full">
               <Form.Item
                 label="Name"
                 name="name"
@@ -62,10 +78,15 @@ export default function LoginPage() {
               </Form.Item>
 
               <Form.Item
+                name="phone"
                 label="Phone Number"
-                name="contact"
+                rules={[{ validator: validatePhoneNumber }]}
               >
-                <Input type="number" placeholder="Enter your Phone Number" />
+                <PhoneInput
+                  enableSearch
+                  country="ng" // Default country (Nigeria in this case)
+                  placeholder="Enter your phone number"
+                />
               </Form.Item>
 
               <Form.Item
@@ -115,13 +136,8 @@ export default function LoginPage() {
                 <div className="flex-grow border-t border-gray-300"></div>
               </div>
 
-              {/* <Button onClick={handleGoogleLogin} className="flex items-center justify-center w-full gap-2 custom-google-btn" size="large">
-                <img src={googleIcon} className="w-[20px] h-[20px]" alt="Google logo" />
-                Sign in with Google
-              </Button> */}
-
               <p className="flex items-center justify-center mt-4 text-sm text-gray-600">
-                Don’t have an account?
+                Don't have an account?
                 <span onClick={() => route("/auth/login")} className="ml-1 font-semibold cursor-pointer text-primary hover:underline">
                   Log in
                 </span>

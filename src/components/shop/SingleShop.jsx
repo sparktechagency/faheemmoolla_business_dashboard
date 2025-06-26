@@ -1,7 +1,7 @@
+import { Modal, message } from "antd";
 import { useState } from "react";
 import { PiMapPinAreaFill } from "react-icons/pi";
 import { Link } from "react-router-dom";
-import { Modal, message } from "antd";
 import {
   useDeleteShopMutation,
   useUpdateShopStatusMutation,
@@ -55,7 +55,7 @@ const SingleShop = ({ shop }) => {
         </div>
       )}
 
-      <div className="h-[250px] overflow-hidden">
+      <div className="h-[250px] overflow-hidden border w-full">
         <img
           src={`${baseURL}/${shop?.banner}`}
           alt="Shop"
@@ -63,7 +63,7 @@ const SingleShop = ({ shop }) => {
           loading="lazy"
         />
       </div>
-      
+
       <div className="px-5 flex-grow flex flex-col">
         <div className="flex gap-3 py-2">
           <div className="w-[70px] h-[70px] flex-shrink-0">
@@ -78,7 +78,9 @@ const SingleShop = ({ shop }) => {
             <h3 className="text-xl text-gray-800 truncate">{shop?.shopName}</h3>
             <p className="flex items-center gap-2">
               <PiMapPinAreaFill className="text-xl" />
-              <span className="truncate">{shop?.shopAddress}</span>
+              <span className="break-words whitespace-normal max-w-[200px]">
+                {shop?.shopAddress}
+              </span>
             </p>
             <p>Open Time: {shop?.shopOpenTime}:00 AM</p>
             <p>Close Time: {shop?.shopCloseTime}:00 PM</p>
@@ -97,9 +99,8 @@ const SingleShop = ({ shop }) => {
         <div className="flex px-3 py-3 mt-auto text-sm justify-evenly">
           <button
             onClick={() => handleModalToggle("off", true)}
-            className={`px-4 py-1 font-semibold text-gray-700 border ${
-              shopStatus ? "border-gray-600 opacity-50" : "border-green-600"
-            } rounded-md`}
+            className={`px-4 py-1 font-semibold text-gray-700 border ${shopStatus ? "border-gray-600 opacity-50" : "border-green-600"
+              } rounded-md`}
             disabled={shopStatusLoading || isLoading}
           >
             {shopStatus ? "Turn On" : "Turn Off"}
